@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { deepPurple } from "@material-ui/core/colors";
+import { jwtDecode } from 'jwt-decode';
 
 export default makeStyles((theme) => ({
   appBar: {
@@ -27,6 +28,7 @@ export default makeStyles((theme) => ({
     height:"70px",
     width:"70px",
   },
+  
   toolbar: {
     display: "flex",
     justifyContent: "flex-end",
@@ -61,5 +63,16 @@ export default makeStyles((theme) => ({
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
+    marginRight:"1rem",
+    marginLeft:"2rem",
   },
+  notification:{
+    marginRight:"2rem",
+  },
+  message:{
+    marginRight:"1rem",
+  },
+  help:{
+    marginRight:"1rem",
+  }
 }));

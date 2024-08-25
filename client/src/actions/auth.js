@@ -1,22 +1,26 @@
 import { AUTH } from "../constants/actionTypes";
 import * as api from "../api/index.js";
 
-export const signin = (formData, history) => async (dispatch) => {
+// Signin action
+export const signin = (formData, navigate) => async (dispatch) => {
   try {
     const { data } = await api.signIn(formData);
-    dispatch({ type: AUTH, data});
-    history('/');
+    dispatch({ type: AUTH, data });
+    navigate('/'); // use navigate for navigation
   } catch (error) {
-    console.log(error);
+    console.error("Signin Error:", error); // Improved error logging
+    // Optionally, dispatch an error action or show an error message to the user
   }
 };
 
-export const signup = (formData, history) => async (dispatch) => {
+// Signup action
+export const signup = (formData, navigate) => async (dispatch) => {
   try {
     const { data } = await api.signUp(formData);
     dispatch({ type: AUTH, data });
-    history('/');
+    navigate('/'); // use navigate for navigation
   } catch (error) {
-    console.log(error);
+    console.error("Signup Error:", error); // Improved error logging
+    // Optionally, dispatch an error action or show an error message to the user
   }
 };
