@@ -42,3 +42,30 @@ export const signup = async (req, res) => {
         res.status(500).json({ message: 'Something went wrong!' });
     }
 };
+
+export const updateUser = async (req, res) => {
+    const { id } = req.params; // Assuming user ID is passed in the URL
+    const { name } = req.body;
+
+    // Ensure picturePath is only set if a file is provided
+    const picturePath = req.file ? `/images/${req.file.filename}` : null;
+
+    try {
+        // Prepare update object dynamically
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (picturePath) updateFields.picturePath = picturePath;
+
+        // Update the user in the database
+        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error updating user:', error); // Log error for server-side debugging
+        res.status(500).json({ message: "Error updating user." });
+    }
+};

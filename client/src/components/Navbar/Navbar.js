@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Button, Typography, Select, MenuItem, InputBase, FormControl, IconButton } from "@material-ui/core";
-import { Help, Message, Notifications } from "@mui/icons-material"; // Import the message and notification icons
+import { Help, Message, Notifications } from "@mui/icons-material";
 import memoriesLogo from '../../images/memoriesLogo.jpg';
 import memoriesText from '../../images/memoriesText.png';
 import useStyles from "./styles";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
+import UserProfileWidget from '../../widgets/UserWidget'; // Import the new widget component
 
-const defaultAvatar = '/path/to/defaultAvatar.png'; // Update with your default image path
+const defaultAvatar = '/path/to/defaultAvatar.png';
 
 const Navbar = () => {
   const classes = useStyles();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+  const [showProfileWidget, setShowProfileWidget] = useState(false); // State to control widget visibility
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,6 +22,14 @@ const Navbar = () => {
     dispatch({ type: "LOGOUT" });
     navigate("/");
     setUser(null);
+  };
+
+  const handleAvatarClick = () => {
+    setShowProfileWidget(!showProfileWidget); // Toggle the widget visibility
+  };
+
+  const handleCloseWidget = () => {
+    setShowProfileWidget(false);
   };
 
   useEffect(() => {
@@ -31,7 +41,7 @@ const Navbar = () => {
       }
     }
     setUser(JSON.parse(localStorage.getItem('profile')));
-  }, [user?.token, navigate]); // Correct dependency array
+  }, [user?.token, navigate]);
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
@@ -51,33 +61,38 @@ const Navbar = () => {
       <Toolbar className={classes.toolbar}>
         {user?.result ? (
           <>
-            {/* Add message and notification buttons */}
             <IconButton sx={{ ml: 2 }} className={classes.help}>
               <Help />
             </IconButton>
-            <IconButton sx={{ ml: 20 }}className={classes.message}>
+            <IconButton sx={{ ml: 20 }} className={classes.message}>
               <Message />
             </IconButton>
             <IconButton sx={{ ml: 2 }} className={classes.notification}>
               <Notifications />
             </IconButton>
-           
-           
-            <FormControl variant="standard" sx={{ ml: 3 }}>
+
+            <FormControl
+              variant="standard"
+              sx={{ ml: 3 }}
+              className={classes.form}
+            >
               <Select
                 value={user.result.name}
-                onChange={() => { }} // Empty onChange handler
                 sx={{
-                  backgroundColor: '',
-                  width: "200px", // Increased width
+                  width: "250px",
                   borderRadius: "0.25rem",
-                  p: "0.25rem 0.5rem",
+                  padding: "0.25rem 0.5rem",
                   "& .MuiSvgIcon-root": {
-                    pr: "0.25rem",
+                    paddingRight: "0.25rem",
                     width: "3rem",
                   },
-                  "& .MuiSelect-select:focus": {
-                    backgroundColor: '#f0f0f0',
+                  "& .MuiSelect-select": {
+                    display: 'flex',
+                    alignItems: 'center',
+                    whiteSpace: 'normal',
+                    overflow: 'visible',
+                    textOverflow: 'clip',
+                    wordBreak: 'break-word',
                   },
                 }}
                 input={<InputBase />}
@@ -88,10 +103,10 @@ const Navbar = () => {
                 <MenuItem
                   onClick={logout}
                   sx={{
-                    color: 'white', // Text color
-                    backgroundColor: 'red', // Background color for the logout button
+                    color: 'white',
+                    backgroundColor: 'red',
                     '&:hover': {
-                      backgroundColor: '#cc0000', // Darker shade on hover
+                      backgroundColor: '#cc0000',
                     },
                   }}
                 >
@@ -103,11 +118,13 @@ const Navbar = () => {
             <Avatar
               className={classes.purple}
               alt={user?.result.name}
+              onClick={handleAvatarClick}
               src={user?.result.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
             >
               {!user?.result.picturePath && user?.result.name.charAt(0)}
             </Avatar>
-          
+
+            {showProfileWidget && <UserProfileWidget onClose={handleCloseWidget} />}
           </>
         ) : (
           <Button

@@ -67,12 +67,18 @@ export default makeStyles((theme) => ({
     marginLeft:"2rem",
   },
   notification:{
-    marginRight:"2rem",
+    marginRight:"3rem",
   },
   message:{
-    marginRight:"1rem",
+    marginRight:"1.5rem",
+    marginLeft:"1rem",
   },
   help:{
-    marginRight:"1rem",
+   // marginRight:"1rem",
+    marginLeft:"-5rem",
+  },
+  form:{
+    backgroundClip:"red",
+  
   }
 }));

@@ -2,47 +2,59 @@ import express from 'express';
 import mongoose from "mongoose";
 import PostMessage from "../models/postMessage.js";
 
+// Get a single post by ID
 export const getPost = async (req, res) => {
   const { id } = req.params;
 
   try {
     const post = await PostMessage.findById(id);
 
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
     res.status(200).json(post);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
+// Get posts with pagination
 export const getPosts = async (req, res) => {
   const { page } = req.query;
+
   try {
-      const LIMIT = 8;
-      const startIndex = (Number(page) - 1) * LIMIT;
-      const total = await PostMessage.countDocuments({});
-      const posts = await PostMessage.find().sort({_id: -1}).limit(LIMIT).skip(startIndex);
-      res.status(200).json({ data: posts, currentPage: Number(page), numberOfPages: Math.ceil(total / LIMIT)});
+    const LIMIT = 8;
+    const startIndex = (Number(page) - 1) * LIMIT; // Calculate the starting index
+    const total = await PostMessage.countDocuments({});
+    const posts = await PostMessage.find().sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+
+    res.status(200).json({
+      data: posts,
+      currentPage: Number(page),
+      numberOfPages: Math.ceil(total / LIMIT),
+    });
   } catch (error) {
-      res.status(404).json({ message: error.message});
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
+// Get posts by search query
 export const getPostsBySearch = async (req, res) => {
   const { searchQuery, tags } = req.query;
+
   try {
-    const title = new RegExp(searchQuery, 'i');
+    const title = new RegExp(searchQuery, 'i'); // 'i' for case insensitive
 
     const posts = await PostMessage.find({
       $or: [{ title }, { tags: { $in: tags.split(',') } }],
     });
 
-    res.json({ data: posts });
+    res.status(200).json({ data: posts });
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
-
+// Create a new post
 export const createPost = async (req, res) => {
   const post = req.body;
 
@@ -57,41 +69,48 @@ export const createPost = async (req, res) => {
 
     res.status(201).json(newPostMessage);
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    res.status(409).json({ message: "Conflict: Could not save the post" });
   }
 };
 
+// Update an existing post
 export const updatePost = async (req, res) => {
   const { id } = req.params;
   const post = req.body;
 
-  // Check if the ID is valid
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send(`No post with id: ${id}`);
   }
 
-  // Create an object with the updated post data
-  const updatedPost = await PostMessage.findByIdAndUpdate(
-    id,
-    { ...post, _id: id },
-    { new: true } // Return the updated document
-  );
+  try {
+    const updatedPost = await PostMessage.findByIdAndUpdate(
+      id,
+      { ...post, _id: id },
+      { new: true } // Return the updated document
+    );
 
-  // Send the updated post as the response
-  res.json(updatedPost);
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: "Could not update the post" });
+  }
 };
 
-
+// Delete a post
 export const deletePost = async (req, res) => {
   const { id } = req.params;
+
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
-  await PostMessage.findByIdAndDelete(id);
-  res.json({ message: "Post deleted successfully." });
-}
 
+  try {
+    await PostMessage.findByIdAndDelete(id);
+    res.json({ message: "Post deleted successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Could not delete the post" });
+  }
+};
 
-
+// Like or Unlike a post
 export const likePost = async (req, res) => {
   const { id } = req.params;
 
@@ -113,47 +132,40 @@ export const likePost = async (req, res) => {
     const index = post.likes.findIndex((userId) => userId === String(req.userId));
 
     if (index === -1) {
-      post.likes.push(req.userId);
+      post.likes.push(req.userId); // Like the post
     } else {
-      post.likes = post.likes.filter((userId) => userId !== String(req.userId));
+      post.likes = post.likes.filter((userId) => userId !== String(req.userId)); // Unlike the post
     }
 
     const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
 
     res.status(200).json(updatedPost);
   } catch (error) {
-    console.error('Error in likePost:', error);
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
 
-
+// Add a comment to a post
 export const commentPost = async (req, res) => {
   try {
     const { id } = req.params;
     const { value } = req.body;
 
-    // Validate input
-    if (!value || typeof value !== 'string') {
+    if (!value || !value.trim()) { // Check for empty or whitespace-only comments
       return res.status(400).json({ message: 'Invalid comment value' });
     }
 
-    // Find the post
     const post = await PostMessage.findById(id);
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Add the new comment to the post's comment array
     post.comment.push(value);
 
-    // Save the updated post
     const updatedPost = await post.save();
 
-    // Return the updated post
     res.json(updatedPost);
   } catch (error) {
-    console.error(error); // Log the error for debugging
     res.status(500).json({ message: 'Something went wrong' });
   }
 };

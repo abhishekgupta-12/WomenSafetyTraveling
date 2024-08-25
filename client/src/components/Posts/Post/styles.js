@@ -20,6 +20,10 @@ export default makeStyles({
     borderRadius: '15px',
     height: '100%',
     position: 'relative',
+    '&:hover': {
+          transform: 'scale(1.05)', // Increase scale on hover
+          boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)', // Add shadow on hover
+        },
   },
   overlay: {
     position: 'absolute',

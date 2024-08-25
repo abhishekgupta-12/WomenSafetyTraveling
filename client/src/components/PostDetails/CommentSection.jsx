@@ -13,9 +13,7 @@ const CommentSection = ({ post }) => {
     const commentsRef = useRef();
 
     useEffect(() => {
-        if (post?.comment) {
-            setComments(post.comment);
-        }
+        setComments(post?.comment || []);
     }, [post]);
 
     const handleComment = async () => {
@@ -26,11 +24,14 @@ const CommentSection = ({ post }) => {
         // Dispatch the commentPost action and get the updated post
         const updatedPost = await dispatch(commentPost(finalComment, post._id));
 
-        if (updatedPost) {
-            setComments(updatedPost.comment); // Update the comments state with the new comments
-            setComment(''); // Clear the comment box
-            commentsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
+        // Update comments state with the newly added comment at the top
+        setComments([finalComment, ...comments]);
+
+        // Clear the comment box
+        setComment('');
+
+        // Scroll into view
+        commentsRef.current.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (

@@ -63,7 +63,7 @@ const Home = () => {
           spacing={3}
           className={classes.gridContainer}
         >
-          <Grid item xs={12} md={9} sm={6}>
+          <Grid item xs={12} md={9} sm={6} >
             <Posts setCurrentId={setCurrentId} />
           </Grid>
           <Grid item xs={12} md={3} sm={6}>

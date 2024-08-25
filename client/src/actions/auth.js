@@ -1,4 +1,4 @@
-import { AUTH } from "../constants/actionTypes";
+import { AUTH, UPDATE_USER } from "../constants/actionTypes";
 import * as api from "../api/index.js";
 
 // Signin action
@@ -21,6 +21,19 @@ export const signup = (formData, navigate) => async (dispatch) => {
     navigate('/'); // use navigate for navigation
   } catch (error) {
     console.error("Signup Error:", error); // Improved error logging
+    // Optionally, dispatch an error action or show an error message to the user
+  }
+};
+
+
+export const updateUser = (formData) => async (dispatch) => {
+  try {
+    const { data } = await api.updateUser(formData);
+    dispatch({ type: UPDATE_USER, data });
+    // Update local storage if needed
+    localStorage.setItem('profile', JSON.stringify({ ...JSON.parse(localStorage.getItem('profile')), result: data }));
+  } catch (error) {
+    console.error("Update Error:", error);
     // Optionally, dispatch an error action or show an error message to the user
   }
 };
