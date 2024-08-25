@@ -62,23 +62,24 @@ export const createPost = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
-  // const { id: _id } = req.params;
   const { id } = req.params;
   const post = req.body;
-  if (!mongoose.Types.ObjectId.isValid(id))
+
+  // Check if the ID is valid
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send(`No post with id: ${id}`);
-  const updatedPost = {post, _id: id};
-  await PostMessage.findByIdAndUpdate(id, updatePost, {new: true});
-  /*
+  }
+
+  // Create an object with the updated post data
   const updatedPost = await PostMessage.findByIdAndUpdate(
-    _id,
-    { ...post, _id },
-    { new: true }
+    id,
+    { ...post, _id: id },
+    { new: true } // Return the updated document
   );
-  */
+
+  // Send the updated post as the response
   res.json(updatedPost);
 };
-
 
 
 export const deletePost = async (req, res) => {

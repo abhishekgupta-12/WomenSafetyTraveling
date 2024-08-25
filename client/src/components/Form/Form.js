@@ -70,6 +70,7 @@ const Form = ({ currentId, setCurrentId }) => {
           variant="outlined"
           label="Title"
           fullWidth
+          multiline
           value={postData.title}
           onChange={(e) => setPostData({ ...postData, title: e.target.value })}
         />
@@ -78,6 +79,7 @@ const Form = ({ currentId, setCurrentId }) => {
           variant="outlined"
           label="Message"
           fullWidth
+          multiline
           value={postData.message}
           onChange={(e) =>
             setPostData({ ...postData, message: e.target.value })
