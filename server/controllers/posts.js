@@ -7,7 +7,8 @@ export const getPost = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const post = await PostMessage.findById(id);
+    // Fetch the post and populate the 'creator' field with user details
+    const post = await PostMessage.findById(id).populate('creator');
 
     if (!post) return res.status(404).json({ message: "Post not found" });
 

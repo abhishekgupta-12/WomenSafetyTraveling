@@ -51,4 +51,12 @@ export default makeStyles((theme) => ({
     overflowY: "auto",
     marginRight: "30px",
   },
+  commentContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(2),
+  },
+  avatar: {
+    marginRight: theme.spacing(1),
+  },
 }));

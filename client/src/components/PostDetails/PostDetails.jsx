@@ -16,7 +16,7 @@ const PostDetails = () => {
 
   useEffect(() => {
     dispatch(getPost(id));
-  }, [id, dispatch]); // Added dispatch to the dependency array
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (post) {
@@ -25,9 +25,7 @@ const PostDetails = () => {
         tags: post?.tags.join(',')
       }));
     }
-  }, [post, dispatch]); // Added dispatch to the dependency array
-
-  if (!post) return null;
+  }, [post, dispatch]);
 
   if (isLoading) {
     return (
@@ -36,6 +34,8 @@ const PostDetails = () => {
       </Paper>
     );
   }
+
+  if (!post) return null;
 
   const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);
   const openPost = (id) => navigate(`/posts/${id}`);
@@ -53,13 +53,9 @@ const PostDetails = () => {
           <Typography gutterBottom variant="body1" component="p">
             {post.message}
           </Typography>
-          <Typography variant="h6">Created by: {post.name}</Typography>
+          <Typography variant="h6" style={{ fontWeight:"bold"}}>Created by: {post.creator?.name || 'Anonymous'}</Typography>
           <Typography variant="body1">
             {moment(post.createdAt).fromNow()}
-          </Typography>
-          <Divider style={{ margin: "20px 0" }} />
-          <Typography variant="body1">
-            <strong>Realtime Chat - coming soon!</strong>
           </Typography>
           <Divider style={{ margin: "20px 0" }} />
           <CommentSection post={post} />
@@ -72,7 +68,7 @@ const PostDetails = () => {
               post.selectedFile ||
               "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
             }
-            alt={post.title || 'Post image'} // Added alt prop
+            alt={post.title || 'Post image'}
           />
         </div>
       </div>
@@ -84,7 +80,7 @@ const PostDetails = () => {
           <Divider />
           <div className={classes.recommendedPosts}>
             {recommendedPosts.map(
-              ({ title, name, message, likes, selectedFile, _id }) => (
+              ({ title, creator, message, likes, selectedFile, _id }) => (
                 <div
                   style={{ margin: "20px", cursor: "pointer" }}
                   onClick={() => openPost(_id)}
@@ -94,7 +90,7 @@ const PostDetails = () => {
                     {title}
                   </Typography>
                   <Typography gutterBottom variant="subtitle2">
-                    {name}
+                    {creator?.name || 'Anonymous'}
                   </Typography>
                   <Typography gutterBottom variant="subtitle2">
                     {message}
@@ -104,7 +100,7 @@ const PostDetails = () => {
                   </Typography>
                   <img
                     src={selectedFile}
-                    alt={title || 'Recommended post image'} // Added alt prop
+                    alt={title || 'Recommended post image'}
                     width="200px"
                   />
                 </div>

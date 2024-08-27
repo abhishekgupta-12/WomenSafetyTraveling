@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AppBar, Avatar, Toolbar, Button, Typography, Select, MenuItem, InputBase, FormControl, IconButton } from "@material-ui/core";
+import { AppBar, Avatar, Toolbar, Button, Typography, IconButton } from "@material-ui/core";
 import { Help, Message, Notifications } from "@mui/icons-material";
 import memoriesLogo from '../../images/memoriesLogo.jpg';
 import memoriesText from '../../images/memoriesText.png';
 import useStyles from "./styles";
-import { useDispatch } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
 import UserProfileWidget from '../../widgets/UserWidget'; // Import the new widget component
 
@@ -15,14 +14,7 @@ const Navbar = () => {
   const classes = useStyles();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
   const [showProfileWidget, setShowProfileWidget] = useState(false); // State to control widget visibility
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const logout = () => {
-    dispatch({ type: "LOGOUT" });
-    navigate("/");
-    setUser(null);
-  };
 
   const handleAvatarClick = () => {
     setShowProfileWidget(!showProfileWidget); // Toggle the widget visibility
@@ -37,7 +29,9 @@ const Navbar = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       if (decodedToken.exp * 1000 < new Date().getTime()) {
-        logout();
+        // Logout logic is not needed
+        // You can handle token expiration here, such as redirecting to login
+        navigate('/auth');
       }
     }
     setUser(JSON.parse(localStorage.getItem('profile')));
@@ -64,56 +58,16 @@ const Navbar = () => {
             <IconButton sx={{ ml: 2 }} className={classes.help}>
               <Help />
             </IconButton>
-            <IconButton sx={{ ml: 20 }} className={classes.message}>
+            <IconButton sx={{ ml: 2 }} className={classes.message}>
               <Message />
             </IconButton>
             <IconButton sx={{ ml: 2 }} className={classes.notification}>
               <Notifications />
             </IconButton>
 
-            <FormControl
-              variant="standard"
-              sx={{ ml: 3 }}
-              className={classes.form}
-            >
-              <Select
-                value={user.result.name}
-                sx={{
-                  width: "250px",
-                  borderRadius: "0.25rem",
-                  padding: "0.25rem 0.5rem",
-                  "& .MuiSvgIcon-root": {
-                    paddingRight: "0.25rem",
-                    width: "3rem",
-                  },
-                  "& .MuiSelect-select": {
-                    display: 'flex',
-                    alignItems: 'center',
-                    whiteSpace: 'normal',
-                    overflow: 'visible',
-                    textOverflow: 'clip',
-                    wordBreak: 'break-word',
-                  },
-                }}
-                input={<InputBase />}
-              >
-                <MenuItem value={user.result.name}>
-                  <Typography>{user.result.name}</Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={logout}
-                  sx={{
-                    color: 'white',
-                    backgroundColor: 'red',
-                    '&:hover': {
-                      backgroundColor: '#cc0000',
-                    },
-                  }}
-                >
-                  Log Out
-                </MenuItem>
-              </Select>
-            </FormControl>
+            <Typography variant="h6" sx={{ ml: 3 }}>
+              {user.result.name}
+            </Typography>
 
             <Avatar
               className={classes.purple}

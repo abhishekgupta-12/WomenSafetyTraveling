@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Paper, Typography, Avatar, Box, TextField, Button, IconButton } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 import FlexBetween from '../components/FlexBetween';
+import { jwtDecode } from 'jwt-decode';
 import { updateUser } from '../api'; // Import the updateUser function
 import { UPDATE_USER } from '../constants/actionTypes'; // Import the action type for user update
 
@@ -10,42 +14,61 @@ const UserWidget = ({ onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState('');
     const [newPicture, setNewPicture] = useState(null);
-    const user = JSON.parse(localStorage.getItem('profile'));
+
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
     const numberOfPosts = useSelector((state) => state.posts.length);
+
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleNameChange = (e) => setNewName(e.target.value);
     const handlePictureChange = (e) => setNewPicture(e.target.files[0]);
+    const defaultAvatar = '/path/to/defaultAvatar.png';
 
+    const logout = () => {
+        dispatch({ type: "LOGOUT" });
+        navigate("/");
+    };
+    
     const handleSubmit = async () => {
         const formData = new FormData();
         if (newName) formData.append('name', newName);
         if (newPicture) formData.append('picture', newPicture);
-    
+
         try {
-            console.log("Form Data:", formData); // Debugging line to inspect formData
-            const response = await updateUser.updateUser(formData);
-            console.log('Update response:', response.data); // Debugging line
-    
+            const response = await updateUser(formData);
             // Update local storage and Redux store
-            localStorage.setItem('profile', JSON.stringify({ ...user, result: response.data }));
-            dispatch({ type: UPDATE_USER, payload: response.data });
+            const updatedProfile = { ...user, result: response.data };
+            localStorage.setItem('profile', JSON.stringify(updatedProfile));
+            dispatch({ type: UPDATE_USER, data: response.data });
             setIsEditing(false);
         } catch (error) {
             console.error('Error updating profile:', error);
         }
     };
+    useEffect(() => {
+        const token = user?.token;
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          if (decodedToken.exp * 1000 < new Date().getTime()) {
+            logout();
+          }
+        }
+        setUser(JSON.parse(localStorage.getItem('profile')));
+      }, [user?.token, navigate]);
     
 
     return (
-        <Paper style={{ padding: '1rem', position: 'absolute', top: '60px', right: '20px', width: '250px', zIndex: 10 }}>
+        <Paper style={{ padding: '1rem', position: 'absolute', top: '60px', right: '20px', width: '250px', zIndex: 10, border: "black solid 0.1rem" }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar
-                    src={user?.result.picturePath ? `/images/${user.result.picturePath}` : '/path/to/defaultAvatar.png'}
-                    alt={user?.result.name}
+                    src={user?.result?.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
+                    alt={user?.result?.name || 'User Avatar'}
                     style={{ marginRight: '1rem' }}
-                />
-                <Typography variant="h6">{user?.result.name}</Typography>
+                >
+                    {!user?.result?.picturePath && user?.result?.name?.charAt(0)}
+                </Avatar>
+                <Typography variant="h6">{user?.result?.name || 'User'}</Typography>
                 <IconButton onClick={() => setIsEditing(!isEditing)} style={{ marginLeft: 'auto' }}>
                     <EditIcon />
                 </IconButton>
@@ -98,7 +121,9 @@ const UserWidget = ({ onClose }) => {
                 </Box>
             )}
 
-            <Button onClick={onClose} style={{ marginTop: '1rem' }}>Close</Button>
+            <Button onClick={logout} style={{ marginTop: '0.5rem', color: "red" }}>
+                <LogoutIcon />
+            </Button>
         </Paper>
     );
 };

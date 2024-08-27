@@ -43,12 +43,18 @@ export const signup = async (req, res) => {
     }
 };
 
+
+
 export const updateUser = async (req, res) => {
     const { id } = req.params; // Assuming user ID is passed in the URL
     const { name } = req.body;
 
     // Ensure picturePath is only set if a file is provided
     const picturePath = req.file ? `/images/${req.file.filename}` : null;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).send(`No user exists with id: ${id}`);
+    }
 
     try {
         // Prepare update object dynamically
@@ -69,3 +75,5 @@ export const updateUser = async (req, res) => {
         res.status(500).json({ message: "Error updating user." });
     }
 };
+
+
