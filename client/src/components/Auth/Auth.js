@@ -6,6 +6,7 @@ import {
   Grid,
   Typography,
   Container,
+  IconButton,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -15,7 +16,7 @@ import Icon from "./icon";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signin, signup } from "../../actions/auth";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import FlexBetween from "../FlexBetween";
 import { useDropzone } from "react-dropzone";
 import { Box } from "@mui/material";
@@ -46,31 +47,37 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   pictureUpload: {
-    border: '2px dashed grey',
-    padding: '1rem',
-    marginLeft:'6rem',
-    marginBottom:'1rem',
-    cursor: 'pointer',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: '5px',
-    [theme.breakpoints.down('sm')]: { // Adjust for smaller screens
-      padding: '0.5rem',
-      marginLeft: 0, // Remove left margin on small screens
-      marginRight: 0, // Remove right margin on small screens
+    marginBottom: '1rem',
+    cursor: 'pointer',
+    border: '2px dashed grey',
+    borderRadius: '50%', // Circle border for consistency with Avatar
+    width: '10rem', // Match the Avatar size
+    height: '10rem', // Match the Avatar size
+    position: 'relative', // Needed for positioning the IconButton
+    overflow: 'hidden', // Hide overflow content
+    [theme.breakpoints.down('sm')]: {
+      width: '8rem',
+      height: '8rem',
     },
-    [theme.breakpoints.down('xs')]: { // Further adjustments for extra small screens
-      flexDirection: 'column', // Stack items vertically on extra small screens
-      alignItems: 'flex-start', // Align items to the start
-      textAlign: 'left', // Align text to the left
+    [theme.breakpoints.down('xs')]: {
+      width: '6rem',
+      height: '6rem',
     },
   },
   pictureText: {
     margin: 0,
+    textAlign: 'center',
+    width: '100%',
+    lineHeight: '10rem',
     [theme.breakpoints.down('xs')]: {
       fontSize: '0.9rem',
     },
+  },
+  hiddenInput: {
+    display: 'none',
   },
 }));
 
@@ -88,6 +95,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState(initialState);
+  const [preview, setPreview] = useState(''); // Added state for preview
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -118,6 +126,7 @@ const Auth = () => {
 
   const onDrop = (acceptedFiles) => {
     setFormData({ ...formData, picture: acceptedFiles[0] });
+    setPreview(URL.createObjectURL(acceptedFiles[0])); // Set the preview URL
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -145,31 +154,59 @@ const Auth = () => {
     <GoogleOAuthProvider clientId="your-google-client-id">
       <Container component="main" maxWidth="xs">
         <Paper className={classes.paper} elevation={3}>
+        {isSignUp ?  "" :
           <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <LockOutlinedIcon />
+        </Avatar>
+        }
           <Typography variant="h5">
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {isSignUp ? "Sign Up" : "Log In"}
           </Typography>
           <form className={classes.form} onSubmit={handleSubmit}>
             <Grid container spacing={2}>
+              
               {isSignUp && (
                 <>
-                <Box className={classes.pictureUpload} {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    {!formData.picture ? (
-                      <Typography className={classes.pictureText}>
-                        Add Picture Here
-                      </Typography>
+                  <Box
+                    className={classes.pictureUpload}
+                    {...getRootProps()}
+                    sx={{
+                      height: "3.5rem",
+                      width: "3.5rem",
+                      marginLeft: "9.5rem",
+                      position: "relative",
+                      display: "flex",            // Ensure the text and content are centered
+                      alignItems: "center",       // Center vertically
+                      justifyContent: "center",   // Center horizontally
+                      bgcolor: "#f0f0f0",         // Optional: background color to make the text more visible
+                    }}
+                  >
+                    <input {...getInputProps()} className={classes.hiddenInput} />
+                    {preview ? (
+                      <Avatar
+                        src={preview}
+                        sx={{ width: '100%', height: '100%' }} // Match Avatar size to the Box size
+                      />
                     ) : (
-                      <FlexBetween>
-                        <Typography className={classes.pictureText}>
-                          {formData.picture.name}
-                        </Typography>
-                        <EditOutlinedIcon />
-                      </FlexBetween>
+                      <IconButton
+                        sx={{
+                          position: 'absolute',
+                          bottom: '0',
+                          right: '0',
+                          bgcolor: 'rgba(0,0,0,0.5)',
+                          ":hover": {
+                            bgcolor: 'rgba(0,0,0,0.7)',
+                          },
+                          color: '#ff4081', // Change the color of the icon
+                        }}
+                        component="label"
+                      >
+                        <CameraAltIcon sx={{ color: '#ff4081' }} /> {/* Changed the icon color */}
+                      </IconButton>
                     )}
                   </Box>
+
+
                   <Input
                     name="firstName"
                     label="First Name"
@@ -183,9 +220,9 @@ const Auth = () => {
                     handleChange={handleChange}
                     half
                   />
-                  
                 </>
               )}
+              
               <Input
                 name="email"
                 label="Email Address"
@@ -237,7 +274,12 @@ const Auth = () => {
             />
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Button onClick={switchMode}>
+                <Button onClick={switchMode} style={{
+                  fontWeight:"bold",
+                  color:"red",
+                  fontSize:"0.6rem",
+                  marginTop:"0.5rem"
+                }}>
                   {isSignUp
                     ? "Already have an account? Sign In"
                     : "Don't have an account? Sign Up"}

@@ -24,6 +24,5 @@ const upload = multer({ storage });
 // Define routes
 router.post('/signin', signin);
 router.post('/signup', signup);
-router.patch('/user/update', auth, upload.single('picture'), updateUser); // Ensure 'upload' is applied here and ID is in the URL
-
+router.patch('/user/:id/update', auth, upload.single('picture'), updateUser);
 export default router;

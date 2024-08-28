@@ -1,7 +1,6 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Typography, Avatar, Box, TextField, Button, IconButton } from '@material-ui/core';
 import EditIcon from '@mui/icons-material/Edit';
-import CloseIcon from '@mui/icons-material/Close';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
@@ -14,6 +13,7 @@ const UserWidget = ({ onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState('');
     const [newPicture, setNewPicture] = useState(null);
+    
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
     const numberOfPosts = useSelector((state) => state.posts.length);
@@ -34,29 +34,36 @@ const UserWidget = ({ onClose }) => {
         const formData = new FormData();
         if (newName) formData.append('name', newName);
         if (newPicture) formData.append('picture', newPicture);
-
+    
         try {
-            const response = await updateUser(formData);
+            const response = await updateUser(user.result._id, formData);
+    
+            // Log the response data to check the structure
+            console.log('Updated Profile:', response.data);
+    
             // Update local storage and Redux store
-            const updatedProfile = { ...user, result: response.data };
+            const updatedProfile = { ...user, result: { ...user.result, ...response.data } };
             localStorage.setItem('profile', JSON.stringify(updatedProfile));
             dispatch({ type: UPDATE_USER, data: response.data });
+    
+            // Update component state with the new user data
+            setUser(updatedProfile);
             setIsEditing(false);
         } catch (error) {
             console.error('Error updating profile:', error);
         }
     };
+
     useEffect(() => {
         const token = user?.token;
         if (token) {
-          const decodedToken = jwtDecode(token);
-          if (decodedToken.exp * 1000 < new Date().getTime()) {
-            logout();
-          }
+            const decodedToken = jwtDecode(token);
+            if (decodedToken.exp * 1000 < new Date().getTime()) {
+                logout();
+            }
         }
         setUser(JSON.parse(localStorage.getItem('profile')));
-      }, [user?.token, navigate]);
-    
+    }, [user?.token, navigate]);
 
     return (
         <Paper style={{ padding: '1rem', position: 'absolute', top: '60px', right: '20px', width: '250px', zIndex: 10, border: "black solid 0.1rem" }}>

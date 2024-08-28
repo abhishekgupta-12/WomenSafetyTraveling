@@ -93,4 +93,3 @@ export const commentPost = (comment, id) => async (dispatch) => {
       console.log('Error in commentPost:', error);
   }
 };
-

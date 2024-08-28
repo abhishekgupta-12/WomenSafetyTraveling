@@ -22,21 +22,25 @@ export const signin = async (req, res) => {
 
 export const signup = async (req, res) => {
     const { email, password, firstName, lastName } = req.body;
-    const picturePath = req.file.filename; // Save image path in the database
+    const picturePath = req.file?.filename; // Ensure that req.file is available
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists.' });
         }
+
         const hashedPassword = await bcrypt.hash(password, 12);
+
         const result = await User.create({
             email,
             password: hashedPassword,
             name: `${firstName} ${lastName}`,
             picturePath, // Save image path in the database
         });
+
         const token = jwt.sign({ email: result.email, id: result._id }, 'test', { expiresIn: '1h' });
+
         res.status(201).json({ result, token });
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong!' });
@@ -46,7 +50,7 @@ export const signup = async (req, res) => {
 
 
 export const updateUser = async (req, res) => {
-    const { id } = req.params; // Assuming user ID is passed in the URL
+    const { id } = req.params; // Extract user ID from URL
     const { name } = req.body;
 
     // Ensure picturePath is only set if a file is provided
@@ -75,5 +79,4 @@ export const updateUser = async (req, res) => {
         res.status(500).json({ message: "Error updating user." });
     }
 };
-
 

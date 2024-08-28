@@ -26,6 +26,7 @@ export const signup = (formData, navigate) => async (dispatch) => {
 };
 
 
+// Update user action
 export const updateUser = (formData) => async (dispatch) => {
   try {
     const { data } = await api.updateUser(formData);
