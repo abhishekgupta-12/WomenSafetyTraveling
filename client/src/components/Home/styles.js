@@ -17,4 +17,14 @@ export default makeStyles((theme) => ({
       flexDirection: "column-reverse",
     },
   },
+  chatbotIcon: {
+    position: 'fixed',
+    bottom: theme.spacing(3),
+    right: theme.spacing(3),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
 }));

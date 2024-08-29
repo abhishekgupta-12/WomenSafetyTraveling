@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Button, Typography, IconButton } from "@material-ui/core";
 import { Help, Message, Notifications } from "@mui/icons-material";
@@ -15,6 +15,7 @@ const Navbar = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
   const [showProfileWidget, setShowProfileWidget] = useState(false); // State to control widget visibility
   const navigate = useNavigate();
+  const widgetRef = useRef(null); // Reference for the widget
 
   const handleAvatarClick = () => {
     setShowProfileWidget(!showProfileWidget); // Toggle the widget visibility
@@ -36,6 +37,20 @@ const Navbar = () => {
     }
     setUser(JSON.parse(localStorage.getItem('profile')));
   }, [user?.token, navigate]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (widgetRef.current && !widgetRef.current.contains(event.target)) {
+        handleCloseWidget();
+      }
+    };
+
+    // Attach the event listener
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Clean up the event listener
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
@@ -78,7 +93,11 @@ const Navbar = () => {
               {!user?.result.picturePath && user?.result.name.charAt(0)}
             </Avatar>
 
-            {showProfileWidget && <UserProfileWidget onClose={handleCloseWidget} />}
+            {showProfileWidget && (
+              <div ref={widgetRef}>
+                <UserProfileWidget onClose={handleCloseWidget} />
+              </div>
+            )}
           </>
         ) : (
           <Button

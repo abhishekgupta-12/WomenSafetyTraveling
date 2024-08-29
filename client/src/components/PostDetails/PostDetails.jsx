@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';
+import { Paper, Typography, Divider } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useParams, useNavigate } from 'react-router-dom';
 import useStyles from './styles';
 import { getPost, getPostsBySearch } from '../../actions/posts';
 import CommentSection from './CommentSection';
+import Post from '../skelton/Post.jsx'
+
 
 const PostDetails = () => {
   const { post, posts, isLoading } = useSelector((state) => state.posts);
@@ -30,7 +32,7 @@ const PostDetails = () => {
   if (isLoading) {
     return (
       <Paper elevation={6} className={classes.loadingPaper}>
-        <CircularProgress size="7em" />
+     <Post />
       </Paper>
     );
   }

@@ -9,6 +9,7 @@ const CommentSection = ({ post }) => {
     const classes = useStyles();
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState(post?.comment || []);
+    
     const user = JSON.parse(localStorage.getItem('profile'));
     const dispatch = useDispatch();
     const commentsRef = useRef();
@@ -48,10 +49,10 @@ const CommentSection = ({ post }) => {
                             <div key={i} className={classes.commentContainer}>
                                 <Avatar
                                     alt={c.userName}
-                                    src={comment.creator?.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
+                                    src={user.result.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
                                     className={classes.avatar}
                                 >
-                                     {!comment.creator?.picturePath && comment.creator?.name.charAt(0)}
+                                     {!post?.comment.picturePath && comments.creator?.name.charAt(0)}
                                 </Avatar>
                                 <div className={classes.commentText}>
                                 <Typography key={i} gutterBottom variant="subtitle1">

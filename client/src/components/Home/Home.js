@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getPosts, getPostsBySearch } from "../../actions/posts";
-import { Container, Grow, Grid, Paper, AppBar, TextField, Button } from "@material-ui/core";
+import { Container, Grow, Grid, Paper, AppBar, TextField, Button, IconButton, Dialog, DialogContent } from "@material-ui/core";
+import ChatIcon from '@mui/icons-material/Chat';
 import Posts from "../Posts/Posts";
 import Form from "../Form/Form";
 import Paginate from "../Pagination";
 import { useNavigate, useLocation } from 'react-router-dom';
 import ChipInput from 'material-ui-chip-input';
 import useStyles from './styles';
+import { jwtDecode } from 'jwt-decode';
+import Chatbot from "../../widgets/Chatbot";
+
+
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -15,6 +20,10 @@ function useQuery() {
 
 const Home = () => {
   const [currentId, setCurrentId] = useState(0);
+  const [openBot, setOpenBot] = useState(false);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const query = useQuery();
   const history = useNavigate();
@@ -23,7 +32,6 @@ const Home = () => {
   const classes = useStyles();
   const [search, setSearch] = useState(searchQuery || '');
   const [tags, setTags] = useState(query.get('tags') ? query.get('tags').split(',') : []);
-
   useEffect(() => {
     dispatch(getPosts());
   }, [dispatch]);
@@ -52,6 +60,26 @@ const Home = () => {
   const handleAdd = (tag) => setTags([...tags, tag]);
 
   const handleDelete = (tagToDelete) => setTags(tags.filter((tag) => tag !== tagToDelete));
+
+  const handleBotToggle = () => {
+    if (user) {
+      setOpenBot(!openBot);
+    } else {
+      alert("Please login first.");
+    }
+  };
+  useEffect(() => {
+    const token = user?.token;
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      if (decodedToken.exp * 1000 < new Date().getTime()) {
+        // Logout logic is not needed
+        // You can handle token expiration here, such as redirecting to login
+        navigate('/auth');
+      }
+    }
+    setUser(JSON.parse(localStorage.getItem('profile')));
+  }, [user?.token, navigate]);
 
   return (
     <Grow in>
@@ -106,6 +134,19 @@ const Home = () => {
             )}
           </Grid>
         </Grid>
+
+        {/* Floating Chatbot Icon */}
+        <IconButton
+          className={classes.chatbotIcon}
+          onClick={handleBotToggle}
+        >
+          <ChatIcon fontSize="large" />
+        </IconButton>
+
+        {/* Chatbot Widget */}
+        <Dialog open={openBot} onClose={handleBotToggle}>
+         <Chatbot />
+        </Dialog>
       </Container>
     </Grow>
   );
