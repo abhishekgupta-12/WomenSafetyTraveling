@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useStyles from './styles';
 import { getPost, getPostsBySearch } from '../../actions/posts';
 import CommentSection from './CommentSection';
-import Post from '../skelton/Post.jsx'
+import Post from '../skelton/Post.jsx';
 
 
 const PostDetails = () => {
@@ -32,7 +32,7 @@ const PostDetails = () => {
   if (isLoading) {
     return (
       <Paper elevation={6} className={classes.loadingPaper}>
-     <Post />
+        <Post />
       </Paper>
     );
   }
@@ -55,7 +55,7 @@ const PostDetails = () => {
           <Typography gutterBottom variant="body1" component="p">
             {post.message}
           </Typography>
-          <Typography variant="h6" style={{ fontWeight:"bold"}}>Created by: {post.creator?.name || 'Anonymous'}</Typography>
+          <Typography variant="h6" style={{ fontWeight: "bold" }}>Created by: {post.creator?.name || 'Anonymous'}</Typography>
           <Typography variant="body1">
             {moment(post.createdAt).fromNow()}
           </Typography>
