@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, updatePost } from "../../actions/posts";
 import TextField from '@material-ui/core/TextField';
@@ -8,52 +8,71 @@ import Paper from "@material-ui/core/Paper";
 import FileBase from 'react-file-base64';
 import useStyles from "./styles.js";
 import { useNavigate } from 'react-router-dom';
+import IconButton from '@material-ui/core/IconButton';
+import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({
-    comment:"",
+    comment: "",
     title: "",
     message: "",
     tags: "",
     selectedFile: "",
+    rating: 0,
   });
-  const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);
+  const post = useSelector((state) =>
+    currentId ? state.posts.posts.find((p) => p._id === currentId) : null
+  );
   const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem("profile"));
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (post) {setPostData(post)}
+    if (post) {
+      setPostData(post);
+    }
   }, [post]);
+
   const clear = () => {
     setCurrentId(0);
     setPostData({
-      comment:"",
+      comment: "",
       title: "",
       message: "",
       tags: "",
       selectedFile: "",
+      rating: 0,
     });
   };
-  const user = JSON.parse(localStorage.getItem('profile'));
-  const navigate = useNavigate();
-  const handleSubmit = async(e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentId === 0) {
-      dispatch(createPost({ ...postData, name: user?.result?.name}, navigate));
+      dispatch(createPost({ ...postData, name: user?.result?.name }, navigate));
       clear();
-    }else{
+    } else {
       dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
       clear();
     }
   };
+
+  const handleRatingChange = (value) => {
+    setPostData({ ...postData, rating: value });
+  };
+
   const classes = useStyles();
+
   if (!user?.result?.name) {
-    return(
+    return (
       <Paper className={classes.paper}>
-          <Typography variant="h6" align="center">
-              Please Sign In to Share your own Experience and like other's Experience!
-          </Typography>
+        <Typography variant="h6" align="center">
+          Please Sign In to Share your own Experience and like other's Experience!
+        </Typography>
       </Paper>
-    )
+    );
   }
+
   return (
     <Paper className={classes.paper} elevation={6}>
       <form
@@ -103,6 +122,21 @@ const Form = ({ currentId, setCurrentId }) => {
               setPostData({ ...postData, selectedFile: base64 })
             }
           />
+        </div>
+        <Typography variant="h6">Safety Rate :</Typography>
+        <div>
+          {[1, 2, 3, 4, 5].map((value) => (
+            <IconButton
+              key={value}
+              onClick={() => handleRatingChange(value)}
+            >
+              {postData.rating >= value ? (
+                <StarIcon color="primary" />
+              ) : (
+                <StarBorderIcon color="primary" />
+              )}
+            </IconButton>
+          ))}
         </div>
         <Button
           className={classes.buttonSubmit}

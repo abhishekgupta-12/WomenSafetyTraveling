@@ -1,105 +1,177 @@
-.App{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-  }
-  .wrapper{
-    width: 100%;
-    max-width: 500px;
-    padding: 30px 30px;
-    background: #fdfdfe;
-    border-radius: 20px;
-    box-shadow: 0 4px 4px rgba(0,0,0,0.4);
-  }
-  .wrapper .content .header{
-    display: flex;
-    align-items: center;
-  }
-  .wrapper .content .header .img img{
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-  .wrapper .content .header .right{
-    margin-left: 10px;
-  }
-  .wrapper .content .header .right .name{
-    font-weight: 500;
-    font-size: 1.3em;
-  }
-  .wrapper .content .header .right .status{
-    /* font-size: 0.8em; */
-    color: #363062;
-    font-weight: 500;
-  }
-  .wrapper .content .main{
-    margin: 30px 0 0;
-  }
-  .wrapper .content .main .main_content .messages{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .wrapper .content .main .main_content .messages .bot-message{
-    width: 100%;
-    padding: 15px;
-    text-align: center;
-    background: #EDECED;
-    font-style: 1.1em;
-    border-radius: 10px;
-    margin: 0 10px 0;
-  }
-  .wrapper .content .main .main_content .messages .human-message{
-    width: 100%;
-    padding: 15px;
-    text-align: center;
-    background: #363062;
-    color: #EDECED;
-    font-style: 1.1em;
-    border-radius: 10px;
-    /* margin: 0 10px 0; */
-    position: relative;
-    top: 120px;
-    margin-bottom: 20px;
-  }
-  .wrapper .content .bottom{
-    margin: 120px 0 0;
-  }
-  .wrapper .content .bottom .btm{
-    display: flex;
-    align-items: center;
-  }
-  .wrapper .content .bottom .btm .input input{
-    width: 400px;
-    height: 58px;
-    padding-left: 36px;
-    outline: none;
-    border: none;
-    background: #EDECED;
-    box-sizing: border-box;
-    border-radius: 5px;
-  }
-  .wrapper .content .bottom .btm .btn{
-    margin-left: 10px;
-  }
-  .wrapper .content .bottom .btm .btn button{
-    width: 100px;
-    height: 50px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    background: #363062;
-    color: #FFF;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 1.1em;
-  }
-  .wrapper .content .bottom .btm .btn button i{
-    margin-left: 5px;
-  }
+/* style.css */
 
+/* Main container styles */
+.App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f5f5; /* Light background for the whole page */
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 500px;
+  height: 600px; /* Increased height for the chatbot */
+  padding: 20px;
+  background: #ffffff; /* White background for the chat wrapper */
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Slightly larger shadow for a card effect */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header styles */
+.header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0; /* Subtle border to separate header */
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.img img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #363062; /* Border around the image */
+}
+
+.right {
+  margin-left: 10px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 1.4em;
+  color: #363062;
+}
+
+.status {
+  color: #888;
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+/* Main chat area styles */
+.main {
+  flex: 1; /* Flex-grow to fill available space */
+  background: #f9f9f9; /* Slightly different background for the chat area */
+  border-radius: 10px;
+  padding: 10px;
+  overflow-y: auto; /* Enable scrolling for overflow */
+}
+
+/* Message container styles */
+.message_container {
+  margin-bottom: 10px;
+}
+
+.bot-message-container .message {
+  width: fit-content;
+  padding: 12px 18px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  max-width: 80%;
+  margin: 5px 0;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.user-message-container .message {
+  width: fit-content;
+  padding: 12px 18px;
+  background: #363062;
+  color: #fff;
+  border-radius: 12px;
+  max-width: 80%;
+  margin: 5px 0;
+  font-size: 1.1em;
+  align-self: flex-end; /* Align user messages to the right */
+}
+
+/* Input area styles */
+.input {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 10px;
+}
+
+.input input {
+  flex: 1;
+  height: 40px;
+  padding-left: 15px;
+  outline: none;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.send, .voice {
+  border: none;
+  outline: none;
+  background: #363062;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 15px;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.send:hover, .voice:hover {
+  background: #4a3b6b; /* Slightly different color on hover */
+}
+
+.voice {
+  background: #4a3b6b; /* Different color for voice button */
+}
+
+.voice:active {
+  background: #3a2b4b; /* Darker color when button is pressed */
+}
+
+/* Modal styles for enlarged image */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+.modal-content {
+  position: relative;
+  border-radius: 8px; /* Rounded corners */
+  background: #fff; /* White background for modal */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for modal */
+}
+
+.modal-image {
+  border-radius: 8px; /* Rounded corners for the image */
+  object-fit: cover; /* Crop image to fit the container */
+  width: 400px; /* Adjust width as needed */
+  height: 400px; /* Adjust height as needed */
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .wrapper {
+    height: 100%; /* Full height on small screens */
+  }
+}
 
 
 /* ------------------------------------------------------------------ */

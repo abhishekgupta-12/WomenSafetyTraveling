@@ -7,6 +7,8 @@ import useStyles from './styles';
 import { getPost, getPostsBySearch } from '../../actions/posts';
 import CommentSection from './CommentSection';
 import Post from '../skelton/Post.jsx';
+import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 
 const PostDetails = () => {
@@ -54,6 +56,20 @@ const PostDetails = () => {
           </Typography>
           <Typography gutterBottom variant="body1" component="p">
             {post.message}
+          </Typography>
+          <Typography gutterBottom variant="body1" component="div" style={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="h7" style={{ fontWeight: "bold", color: "blue", marginRight: "8px" }}>
+              Safety Rating:
+            </Typography>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <span key={value}>
+                {post.rating >= value ? (
+                  <StarIcon color="primary" />
+                ) : (
+                  <StarBorderIcon color="primary" />
+                )}
+              </span>
+            ))}
           </Typography>
           <Typography variant="h6" style={{ fontWeight: "bold" }}>Created by: {post.creator?.name || 'Anonymous'}</Typography>
           <Typography variant="body1">
