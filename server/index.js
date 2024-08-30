@@ -44,6 +44,11 @@ app.use('/user', upload.single('picture'), userRoutes); // Add multer middleware
 // Connect to MongoDB
 const PORT = process.env.PORT || 5000;
 
+
+app.get('/' , (req,res)=>{
+  res.send('App is running');
+})
+
 mongoose.connect(process.env.CONNECTION_URL)
   .then(() => {
     console.log('Connected to MongoDB');
