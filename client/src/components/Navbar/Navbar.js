@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Button, Typography, IconButton } from "@material-ui/core";
-import { Help, Message, Notifications } from "@mui/icons-material";
+import { Message, Notifications } from "@mui/icons-material";
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 import memoriesLogo from '../../images/memoriesLogo.jpg';
 import memoriesText from '../../images/memoriesText.png';
 import useStyles from "./styles";
 import { jwtDecode } from 'jwt-decode';
 import UserProfileWidget from '../../widgets/UserWidget'; // Import the new widget component
+import Tooltip from '@mui/material/Tooltip';
 
 const defaultAvatar = '/path/to/defaultAvatar.png';
 
@@ -23,6 +25,10 @@ const Navbar = () => {
 
   const handleCloseWidget = () => {
     setShowProfileWidget(false);
+  };
+
+  const handleHelpClick = () => {
+    navigate('/newsapp'); // Navigate to the Newsapp page
   };
 
   useEffect(() => {
@@ -70,15 +76,24 @@ const Navbar = () => {
       <Toolbar className={classes.toolbar}>
         {user?.result ? (
           <>
-            <IconButton sx={{ ml: 2 }} className={classes.help}>
-              <Help />
-            </IconButton>
+            <Tooltip title="News">
+              <IconButton sx={{ ml: 2 }} className={classes.help} onClick={handleHelpClick}>
+                <NewspaperIcon />
+              </IconButton>
+            </Tooltip>
+            
+            <Tooltip title="Message">
             <IconButton sx={{ ml: 2 }} className={classes.message}>
               <Message />
             </IconButton>
+            </Tooltip>
+           
+            <Tooltip title="Notifiaction">
             <IconButton sx={{ ml: 2 }} className={classes.notification}>
               <Notifications />
             </IconButton>
+            </Tooltip>
+            
 
             <Typography variant="h6" sx={{ ml: 3 }}>
               {user.result.name}

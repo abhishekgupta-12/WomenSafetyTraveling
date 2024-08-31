@@ -9,7 +9,7 @@ const CommentSection = ({ post }) => {
     const classes = useStyles();
     const [comment, setComment] = useState('');
     const [comments, setComments] = useState(post?.comment || []);
-    
+
     const user = JSON.parse(localStorage.getItem('profile'));
     const dispatch = useDispatch();
     const commentsRef = useRef();
@@ -17,25 +17,27 @@ const CommentSection = ({ post }) => {
     useEffect(() => {
         setComments(post?.comment || []);
     }, [post]);
+
+
     const defaultAvatar = '/path/to/defaultAvatar.png';
     const handleComment = async () => {
         if (!user?.result?.name) return;
-
-        const finalComment = `${user.result.name}: ${comment}`;
-
+    
+        const finalComment = `${user.result.name}: ${comment}: ${user.result.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}`;
+    
         // Dispatch the commentPost action and get the updated post
         const updatedPost = await dispatch(commentPost(finalComment, post._id));
-
+    
         // Update comments state with the newly added comment at the top
         setComments([finalComment, ...comments]);
-
+    
         // Clear the comment box
         setComment('');
-
+    
         // Scroll into view
         commentsRef.current.scrollIntoView({ behavior: 'smooth' });
     };
-
+    
     return (
         <div>
             <div className={classes.commentsOuterContainer}>
@@ -49,17 +51,17 @@ const CommentSection = ({ post }) => {
                             <div key={i} className={classes.commentContainer}>
                                 <Avatar
                                     alt={c.userName}
-                                    src={user.result.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
+                                    src={c.split(': ')[2]}
                                     className={classes.avatar}
                                 >
-                                     {!post?.comment.picturePath && comments.creator?.name.charAt(0)}
+                                    {!post?.comment.picturePath && comments.creator?.name.charAt(0)}
                                 </Avatar>
                                 <div className={classes.commentText}>
-                                <Typography key={i} gutterBottom variant="subtitle1">
-                                    <strong>{c.split(': ')[0]}</strong>: {c.split(': ')[1]}
-                                </Typography>
+                                    <Typography key={i} gutterBottom variant="subtitle1">
+                                        <strong>{c.split(': ')[0]}</strong>: {c.split(': ')[1]}
+                                    </Typography>
                                 </div>
-                                
+
                             </div>
 
                         ))

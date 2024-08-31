@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Paper, Typography, Divider } from '@material-ui/core';
+import React, { useEffect, useRef, useState } from 'react';
+import { Paper, Typography, Divider, Avatar } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -10,13 +10,14 @@ import Post from '../skelton/Post.jsx';
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 
-
 const PostDetails = () => {
   const { post, posts, isLoading } = useSelector((state) => state.posts);
+  const [isClicked, setIsClicked] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const classes = useStyles();
   const { id } = useParams();
+  const modalRef = useRef(null);
 
   useEffect(() => {
     dispatch(getPost(id));
@@ -30,6 +31,25 @@ const PostDetails = () => {
       }));
     }
   }, [post, dispatch]);
+
+  const handleAvatarClick = () => {
+    setIsClicked(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsClicked(false);
+  };
+
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      handleCloseModal();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (isLoading) {
     return (
@@ -48,6 +68,39 @@ const PostDetails = () => {
     <Paper style={{ padding: "20px", borderRadius: "15px" }} elevation={6}>
       <div className={classes.card}>
         <div className={classes.section}>
+          <Typography
+            variant="h6"
+            style={{
+              fontWeight: "bold",
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: "1rem"
+            }}
+          >
+            <Avatar
+              src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
+              alt={post.creator?.name || 'Anonymous'}
+              style={{
+                marginRight: '1rem',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease',
+              }}
+              onClick={handleAvatarClick}
+            />
+            {isClicked && (
+              <div className="modal-overlay" onClick={handleCloseModal}>
+                <div className="modal-content" ref={modalRef}>
+                  <img
+                    src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
+                    alt={post.creator?.name || 'Anonymous'}
+                    className="modal-image"
+                  />
+                </div>
+              </div>
+            )}
+            {post.creator?.name || 'Anonymous'}
+          </Typography>
+          <Divider />
           <Typography variant="h3" component="h2">
             {post.title}
           </Typography>
@@ -71,7 +124,6 @@ const PostDetails = () => {
               </span>
             ))}
           </Typography>
-          <Typography variant="h6" style={{ fontWeight: "bold" }}>Created by: {post.creator?.name || 'Anonymous'}</Typography>
           <Typography variant="body1">
             {moment(post.createdAt).fromNow()}
           </Typography>
