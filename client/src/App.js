@@ -6,6 +6,7 @@ import Home from "./components/Home/Home";
 import Auth from "./components/Auth/Auth";
 import PostDetails from "./components/PostDetails/PostDetails"
 import Newsapp from "./News/Newsapp";
+import HelpWidget from "./widgets/HelpWidget";
 const App = () => {
     const user = JSON.parse(localStorage.getItem('profile'));
     return (
@@ -16,6 +17,7 @@ const App = () => {
             <Route path="/" exact Component={() => <Navigate to="/posts" />} />
             <Route path="/posts" exact Component={Home} />
             <Route path="/newsapp" exact Component={Newsapp} />
+            <Route path="/help" exact Component={HelpWidget} />
             <Route path="/posts/search" exact Component={Home} />
             <Route path="/posts/:id" exact Component={PostDetails} />
             <Route

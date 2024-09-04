@@ -1,34 +1,44 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Button, Typography, IconButton } from "@material-ui/core";
-import { Message, Notifications } from "@mui/icons-material";
+import {  Notifications } from "@mui/icons-material";
+import HelpIcon from '@mui/icons-material/Help';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import memoriesLogo from '../../images/memoriesLogo.jpg';
 import memoriesText from '../../images/memoriesText.png';
 import useStyles from "./styles";
 import { jwtDecode } from 'jwt-decode';
-import UserProfileWidget from '../../widgets/UserWidget'; // Import the new widget component
+import UserProfileWidget from '../../widgets/UserWidget';
 import Tooltip from '@mui/material/Tooltip';
+import HelpWidget from "../../widgets/HelpWidget";
 
 const defaultAvatar = '/path/to/defaultAvatar.png';
 
 const Navbar = () => {
   const classes = useStyles();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
-  const [showProfileWidget, setShowProfileWidget] = useState(false); // State to control widget visibility
+  const [showProfileWidget, setShowProfileWidget] = useState(false);
+  const [showHelpWidget, setShowHelpWidget] = useState(false);
   const navigate = useNavigate();
-  const widgetRef = useRef(null); // Reference for the widget
+  const widgetRef = useRef(null);
 
   const handleAvatarClick = () => {
-    setShowProfileWidget(!showProfileWidget); // Toggle the widget visibility
+    setShowProfileWidget(!showProfileWidget);
+    setShowHelpWidget(false); // Close help widget if user widget is opened
   };
 
   const handleCloseWidget = () => {
     setShowProfileWidget(false);
+    setShowHelpWidget(false);
   };
 
-  const handleHelpClick = () => {
-    navigate('/newsapp'); // Navigate to the Newsapp page
+  const handlenewsclick = () => {
+    navigate('/newsapp');
+  };
+
+  const handlehelpclick = () => {
+    setShowHelpWidget(!showHelpWidget);
+    setShowProfileWidget(false); // Close user widget if help widget is opened
   };
 
   useEffect(() => {
@@ -36,8 +46,6 @@ const Navbar = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       if (decodedToken.exp * 1000 < new Date().getTime()) {
-        // Logout logic is not needed
-        // You can handle token expiration here, such as redirecting to login
         navigate('/auth');
       }
     }
@@ -51,10 +59,8 @@ const Navbar = () => {
       }
     };
 
-    // Attach the event listener
     document.addEventListener('mousedown', handleClickOutside);
 
-    // Clean up the event listener
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
@@ -77,23 +83,28 @@ const Navbar = () => {
         {user?.result ? (
           <>
             <Tooltip title="News">
-              <IconButton sx={{ ml: 2 }} className={classes.help} onClick={handleHelpClick}>
+              <IconButton sx={{ ml: 2 }} className={classes.help} onClick={handlenewsclick}>
                 <NewspaperIcon />
               </IconButton>
             </Tooltip>
             
-            <Tooltip title="Message">
-            <IconButton sx={{ ml: 2 }} className={classes.message}>
-              <Message />
-            </IconButton>
+            <Tooltip title="Help">
+              <IconButton sx={{ ml: 2 }} className={classes.message} onClick={handlehelpclick}>
+                <HelpIcon />
+              </IconButton>
             </Tooltip>
+
+            {showHelpWidget && (
+              <div ref={widgetRef}>
+                <HelpWidget onClose={handleCloseWidget} />
+              </div>
+            )}
            
-            <Tooltip title="Notifiaction">
-            <IconButton sx={{ ml: 2 }} className={classes.notification}>
-              <Notifications />
-            </IconButton>
+            <Tooltip title="Notification">
+              <IconButton sx={{ ml: 2 }} className={classes.notification}>
+                <Notifications />
+              </IconButton>
             </Tooltip>
-            
 
             <Typography variant="h6" sx={{ ml: 3 }}>
               {user.result.name}

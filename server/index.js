@@ -8,6 +8,7 @@ import 'dotenv/config';
 
 import postRoutes from './routes/posts.js';
 import userRoutes from './routes/users.js';
+import messageRoutes from './routes/message.js';
 
 // Get __dirname equivalent in ES modules
 const __filename = url.fileURLToPath(import.meta.url);
@@ -39,15 +40,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/posts', postRoutes);
-app.use('/user', upload.single('picture'), userRoutes); // Add multer middleware here
+app.use('/user', upload.single('picture'), userRoutes);
+app.use('/message', messageRoutes);
+
+app.get('/', (req, res) => {
+  res.send('App is running');
+});
 
 // Connect to MongoDB
 const PORT = process.env.PORT || 5000;
-
-
-app.get('/' , (req,res)=>{
-  res.send('App is running');
-})
 
 mongoose.connect(process.env.CONNECTION_URL)
   .then(() => {
@@ -56,12 +57,12 @@ mongoose.connect(process.env.CONNECTION_URL)
   })
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error.message);
-    process.exit(1); // Exit the process with a failure code
+    process.exit(1);
   });
 
 // Handle unexpected errors
 process.on('unhandledRejection', (error) => {
   console.error('Unhandled Rejection:', error.message);
-  mongoose.disconnect(); // Close the MongoDB connection if an unhandled rejection occurs
+  mongoose.disconnect();
   process.exit(1);
 });

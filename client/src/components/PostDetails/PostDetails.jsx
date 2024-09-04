@@ -77,27 +77,27 @@ const PostDetails = () => {
               marginBottom: "1rem"
             }}
           >
-            <Avatar
+          <Avatar
+        src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
+        alt={post.creator?.name || 'Anonymous'}
+        style={{
+          marginRight: '1rem',
+          cursor: 'pointer',
+          transition: 'transform 0.3s ease',
+        }}
+        onClick={handleAvatarClick}
+      />
+      {isClicked && (
+        <div className={classes.modalOverlay} onClick={handleCloseModal}>
+          <div className={classes.modalContent} ref={modalRef}>
+            <img
               src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
               alt={post.creator?.name || 'Anonymous'}
-              style={{
-                marginRight: '1rem',
-                cursor: 'pointer',
-                transition: 'transform 0.3s ease',
-              }}
-              onClick={handleAvatarClick}
+              className={classes.modalImage}
             />
-            {isClicked && (
-              <div className="modal-overlay" onClick={handleCloseModal}>
-                <div className="modal-content" ref={modalRef}>
-                  <img
-                    src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
-                    alt={post.creator?.name || 'Anonymous'}
-                    className="modal-image"
-                  />
-                </div>
-              </div>
-            )}
+          </div>
+        </div>
+      )}
             {post.creator?.name || 'Anonymous'}
           </Typography>
           <Divider />
