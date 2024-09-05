@@ -8,7 +8,7 @@ import 'dotenv/config';
 
 import postRoutes from './routes/posts.js';
 import userRoutes from './routes/users.js';
-import messageRoutes from './routes/message.js';
+
 
 // Get __dirname equivalent in ES modules
 const __filename = url.fileURLToPath(import.meta.url);
@@ -41,14 +41,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/posts', postRoutes);
 app.use('/user', upload.single('picture'), userRoutes);
-app.use('/message', messageRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('App is running');
 });
 
 // Connect to MongoDB
-const PORT = process.env.PORT || 5000;
+const PORT =process.env.PORT || 5000;
 
 mongoose.connect(process.env.CONNECTION_URL)
   .then(() => {
