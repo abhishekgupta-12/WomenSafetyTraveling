@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: 'https://walk-safe-server.onrender.com',
 });
 
 API.interceptors.request.use((req) => {
@@ -9,7 +9,15 @@ API.interceptors.request.use((req) => {
     }
     return req;
 });
-export const fetchPost = (id) => API.get(`/posts/${id}`);
+export const fetchPost = async (id) => {
+  try {
+    const response = await API.get(`/posts/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    throw error;
+  }
+};
 export const fetchPosts = (page) => API.get(`/posts?page=${page}`);
 
 export const fetchPostsBySearch = (searchQuery) =>
