@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 import { useSelector } from "react-redux";
-import { Grid, CircularProgress } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import useStyles from "./styles";
 import PostSkeleton from "../skelton/PostSkeleton";
 
@@ -25,7 +25,7 @@ const Posts = ({ setCurrentId }) => {
     >
       {posts.map((post) => (
         <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={ <PostSkeleton />}>
             <Post post={post} setCurrentId={setCurrentId} />
           </Suspense>
         </Grid>
