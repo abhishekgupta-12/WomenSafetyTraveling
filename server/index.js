@@ -10,7 +10,6 @@ import postRoutes from './routes/posts.js';
 import userRoutes from './routes/users.js';
 import newsRoutes from './routes/news.js';
 
-
 // Get __dirname equivalent in ES modules
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,7 +28,19 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+// Image filter
+const isImage = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only images are allowed'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: isImage,
+});
 
 // Middleware
 app.use(express.json({ limit: '30mb' }));
@@ -41,16 +52,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/posts', postRoutes);
-app.use('/user', upload.single('picture'), userRoutes);
-// Use the news routes
+app.use('/user', upload.single('picture'), userRoutes); // Ensure this is the correct route
 app.use('/api', newsRoutes);
 
 app.get('/', (req, res) => {
   res.send('App is running');
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  if (err instanceof multer.MulterError) {
+    res.status(500).send(`Multer error: ${err.message}`);
+  } else {
+    res.status(500).send(`Server error: ${err.message}`);
+  }
+});
+
 // Connect to MongoDB
-const PORT =process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.CONNECTION_URL)
   .then(() => {

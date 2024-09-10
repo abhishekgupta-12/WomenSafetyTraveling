@@ -7,7 +7,10 @@ import {
   Typography,
   Container,
   IconButton,
+  Snackbar, // Import Snackbar
+   // Import Alert
 } from "@material-ui/core";
+import { Alert } from '@mui/material';
 import { makeStyles } from "@material-ui/core/styles";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Input from "./Input";
@@ -20,6 +23,7 @@ import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import FlexBetween from "../FlexBetween";
 import { useDropzone } from "react-dropzone";
 import { Box } from "@mui/material";
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -81,13 +85,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 const initialState = {
   firstName: '',
   lastName: '',
   email: '',
   password: '',
   confirmPassword: '',
-  picture: '', // Add picture field to state
+  picture: '', 
 };
 
 const Auth = () => {
@@ -95,12 +100,14 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState(initialState);
-  const [preview, setPreview] = useState(''); // Added state for preview
+  const [preview, setPreview] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
+  const [openSnackbar, setOpenSnackbar] = useState(false); // State to control Snackbar visibility
 
-  const handleShowPassword = () =>
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
 
   const switchMode = () => {
     setIsSignUp((prevIsSignUp) => !prevIsSignUp);
@@ -110,13 +117,25 @@ const Auth = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = new FormData();
+    
     for (const key in formData) {
       form.append(key, formData[key]);
     }
+
     if (isSignUp) {
-      dispatch(signup(form, navigate)); // Use FormData here
+      dispatch(signup(form, navigate)).catch((error) => {
+        if (error?.response?.data?.message === "User already exists") {
+          setErrorMessage("User already exists!"); // Set error message
+          setOpenSnackbar(true); // Show Snackbar
+        }
+      });
     } else {
-      dispatch(signin(form, navigate));
+      dispatch(signin(form, navigate)).catch((error) => {
+        if (error?.response?.data?.message === "Invalid credentials") {
+          setErrorMessage("Incorrect email or password!"); // Set error message
+          setOpenSnackbar(true); // Show Snackbar
+        }
+      });
     }
   };
 
@@ -126,7 +145,7 @@ const Auth = () => {
 
   const onDrop = (acceptedFiles) => {
     setFormData({ ...formData, picture: acceptedFiles[0] });
-    setPreview(URL.createObjectURL(acceptedFiles[0])); // Set the preview URL
+    setPreview(URL.createObjectURL(acceptedFiles[0])); 
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -134,6 +153,10 @@ const Auth = () => {
     accept: 'image/jpeg, image/png',
     multiple: false,
   });
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false); // Close the Snackbar after it’s displayed
+  };
 
   const onSuccess = (res) => {
     const result = res?.profileObj;
@@ -154,17 +177,16 @@ const Auth = () => {
     <GoogleOAuthProvider clientId="your-google-client-id">
       <Container component="main" maxWidth="xs">
         <Paper className={classes.paper} elevation={3}>
-        {isSignUp ?  "" :
+          {isSignUp ?  "" :
           <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        }
+            <LockOutlinedIcon />
+          </Avatar>
+          }
           <Typography variant="h5">
             {isSignUp ? "Sign Up" : "Log In"}
           </Typography>
           <form className={classes.form} onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-              
               {isSignUp && (
                 <>
                   <Box
@@ -175,17 +197,17 @@ const Auth = () => {
                       width: "3.5rem",
                       marginLeft: "9.5rem",
                       position: "relative",
-                      display: "flex",            // Ensure the text and content are centered
-                      alignItems: "center",       // Center vertically
-                      justifyContent: "center",   // Center horizontally
-                      bgcolor: "#f0f0f0",         // Optional: background color to make the text more visible
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: "#f0f0f0",
                     }}
                   >
                     <input {...getInputProps()} className={classes.hiddenInput} />
                     {preview ? (
                       <Avatar
                         src={preview}
-                        sx={{ width: '100%', height: '100%' }} // Match Avatar size to the Box size
+                        sx={{ width: '100%', height: '100%' }}
                       />
                     ) : (
                       <IconButton
@@ -197,38 +219,20 @@ const Auth = () => {
                           ":hover": {
                             bgcolor: 'rgba(0,0,0,0.7)',
                           },
-                          color: '#ff4081', // Change the color of the icon
+                          color: '#ff4081',
                         }}
                         component="label"
                       >
-                        <CameraAltIcon sx={{ color: '#ff4081' }} /> {/* Changed the icon color */}
+                        <CameraAltIcon sx={{ color: '#ff4081' }} />
                       </IconButton>
                     )}
                   </Box>
-
-
-                  <Input
-                    name="firstName"
-                    label="First Name"
-                    handleChange={handleChange}
-                    autoFocus
-                    half
-                  />
-                  <Input
-                    name="lastName"
-                    label="Last Name"
-                    handleChange={handleChange}
-                    half
-                  />
+                  <Input name="firstName" label="First Name" handleChange={handleChange} autoFocus half />
+                  <Input name="lastName" label="Last Name" handleChange={handleChange} half />
                 </>
               )}
               
-              <Input
-                name="email"
-                label="Email Address"
-                handleChange={handleChange}
-                type="email"
-              />
+              <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
               <Input
                 name="password"
                 label="Password"
@@ -245,13 +249,7 @@ const Auth = () => {
                 />
               )}
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
+            <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
               {isSignUp ? "Sign Up" : "Sign In"}
             </Button>
             <GoogleLogin
@@ -288,9 +286,15 @@ const Auth = () => {
             </Grid>
           </form>
         </Paper>
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity="error" variant="filled">
+            {errorMessage}
+          </Alert>
+        </Snackbar>
       </Container>
     </GoogleOAuthProvider>
   );
 };
 
 export default Auth;
+

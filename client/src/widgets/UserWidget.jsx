@@ -88,7 +88,7 @@ const UserWidget = ({ onClose }) => {
         <Paper style={{ padding: '1rem', position: 'absolute', top: '60px', right: '20px', width: '250px', zIndex: 10, border: "black solid 0.1rem" }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar
-                    src={user?.result?.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
+                    src={user?.result?.picturePath ? user.result.picturePath : defaultAvatar}
                     alt={user?.result?.name || 'User Avatar'}
                     style={{
                         marginRight: '1rem',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Button, Typography, IconButton } from "@material-ui/core";
-import {  Notifications } from "@mui/icons-material";
+import { Notifications } from "@mui/icons-material";
 import HelpIcon from '@mui/icons-material/Help';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import memoriesLogo from '../../images/memoriesLogo.jpg';
@@ -87,7 +87,7 @@ const Navbar = () => {
                 <NewspaperIcon />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Help">
               <IconButton sx={{ ml: 2 }} className={classes.message} onClick={handlehelpclick}>
                 <HelpIcon />
@@ -99,7 +99,7 @@ const Navbar = () => {
                 <HelpWidget onClose={handleCloseWidget} />
               </div>
             )}
-           
+
             <Tooltip title="Notification">
               <IconButton sx={{ ml: 2 }} className={classes.notification}>
                 <Notifications />
@@ -114,10 +114,11 @@ const Navbar = () => {
               className={classes.purple}
               alt={user?.result.name}
               onClick={handleAvatarClick}
-              src={user?.result.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}
+              src={user?.result.picturePath ? user.result.picturePath : defaultAvatar} // Use Cloudinary URL directly
             >
               {!user?.result.picturePath && user?.result.name.charAt(0)}
             </Avatar>
+
 
             {showProfileWidget && (
               <div ref={widgetRef}>

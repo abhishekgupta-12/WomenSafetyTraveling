@@ -23,7 +23,7 @@ const CommentSection = ({ post }) => {
     const handleComment = async () => {
         if (!user?.result?.name) return;
     
-        const finalComment = `${user.result.name}: ${comment}: ${user.result.picturePath ? `/images/${user.result.picturePath}` : defaultAvatar}`;
+        const finalComment = `${user.result.name}: ${comment}: ${user.result.picturePath ? user.result.picturePath : defaultAvatar}`;
     
         // Dispatch the commentPost action and get the updated post
         const updatedPost = await dispatch(commentPost(finalComment, post._id));
