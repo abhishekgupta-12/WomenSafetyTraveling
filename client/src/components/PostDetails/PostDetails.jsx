@@ -77,27 +77,28 @@ const PostDetails = () => {
               marginBottom: "1rem"
             }}
           >
-          <Avatar
-        src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
-        alt={post.creator?.name || 'Anonymous'}
-        style={{
-          marginRight: '1rem',
-          cursor: 'pointer',
-          transition: 'transform 0.3s ease',
-        }}
-        onClick={handleAvatarClick}
-      />
-      {isClicked && (
-        <div className={classes.modalOverlay} onClick={handleCloseModal}>
-          <div className={classes.modalContent} ref={modalRef}>
-            <img
-              src={post.creator?.picturePath ? `/images/${post.creator.picturePath}` : '/path/to/default/avatar'}
+            {/* Avatar image from Cloudinary */}
+            <Avatar
+              src={post.creator?.picturePath || '/path/to/default/avatar'}
               alt={post.creator?.name || 'Anonymous'}
-              className={classes.modalImage}
+              style={{
+                marginRight: '1rem',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease',
+              }}
+              onClick={handleAvatarClick}
             />
-          </div>
-        </div>
-      )}
+            {isClicked && (
+              <div className={classes.modalOverlay} onClick={handleCloseModal}>
+                <div className={classes.modalContent} ref={modalRef}>
+                  <img
+                    src={post.creator?.picturePath || '/path/to/default/avatar'}
+                    alt={post.creator?.name || 'Anonymous'}
+                    className={classes.modalImage}
+                  />
+                </div>
+              </div>
+            )}
             {post.creator?.name || 'Anonymous'}
           </Typography>
           <Divider />
@@ -131,17 +132,21 @@ const PostDetails = () => {
           <CommentSection post={post} />
           <Divider style={{ margin: "20px 0" }} />
         </div>
+
         <div className={classes.imageSection}>
+          {/* Post image from Cloudinary */}
           <img
             className={classes.media}
             src={
               post.selectedFile ||
-              "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png"
+              "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png" // Fallback image
             }
             alt={post.title || 'Post image'}
           />
         </div>
       </div>
+
+      {/* Recommended posts */}
       {!!recommendedPosts.length && (
         <div className={classes.section}>
           <Typography gutterBottom variant="h5">
@@ -168,8 +173,9 @@ const PostDetails = () => {
                   <Typography gutterBottom variant="subtitle1">
                     Likes: {likes ? likes.length : 0}
                   </Typography>
+                  {/* Recommended post image from Cloudinary */}
                   <img
-                    src={selectedFile}
+                    src={selectedFile || 'https://via.placeholder.com/200'} // Use Cloudinary URL or fallback
                     alt={title || 'Recommended post image'}
                     width="200px"
                   />

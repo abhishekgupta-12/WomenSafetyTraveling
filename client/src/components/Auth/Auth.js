@@ -7,8 +7,7 @@ import {
   Typography,
   Container,
   IconButton,
-  Snackbar, // Import Snackbar
-   // Import Alert
+  Snackbar,
 } from "@material-ui/core";
 import { Alert } from '@mui/material';
 import { makeStyles } from "@material-ui/core/styles";
@@ -23,7 +22,6 @@ import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import FlexBetween from "../FlexBetween";
 import { useDropzone } from "react-dropzone";
 import { Box } from "@mui/material";
-
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(3),
   },
   submit: {
@@ -57,11 +55,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '1rem',
     cursor: 'pointer',
     border: '2px dashed grey',
-    borderRadius: '50%', // Circle border for consistency with Avatar
-    width: '10rem', // Match the Avatar size
-    height: '10rem', // Match the Avatar size
-    position: 'relative', // Needed for positioning the IconButton
-    overflow: 'hidden', // Hide overflow content
+    borderRadius: '50%',
+    width: '10rem',
+    height: '10rem',
+    position: 'relative',
+    overflow: 'hidden',
     [theme.breakpoints.down('sm')]: {
       width: '8rem',
       height: '8rem',
@@ -71,20 +69,10 @@ const useStyles = makeStyles((theme) => ({
       height: '6rem',
     },
   },
-  pictureText: {
-    margin: 0,
-    textAlign: 'center',
-    width: '100%',
-    lineHeight: '10rem',
-    [theme.breakpoints.down('xs')]: {
-      fontSize: '0.9rem',
-    },
-  },
   hiddenInput: {
     display: 'none',
   },
 }));
-
 
 const initialState = {
   firstName: '',
@@ -92,7 +80,7 @@ const initialState = {
   email: '',
   password: '',
   confirmPassword: '',
-  picture: '', 
+  picture: '',
 };
 
 const Auth = () => {
@@ -103,9 +91,10 @@ const Auth = () => {
   const [preview, setPreview] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
-  const [openSnackbar, setOpenSnackbar] = useState(false); // State to control Snackbar visibility
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(''); // State for "Please wait" message
 
   const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
 
@@ -116,26 +105,47 @@ const Auth = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoadingMessage("Please wait..."); // Set "Please wait" message
+  
     const form = new FormData();
-    
     for (const key in formData) {
       form.append(key, formData[key]);
     }
-
+  
     if (isSignUp) {
-      dispatch(signup(form, navigate)).catch((error) => {
-        if (error?.response?.data?.message === "User already exists") {
-          setErrorMessage("User already exists!"); // Set error message
-          setOpenSnackbar(true); // Show Snackbar
-        }
-      });
+      dispatch(signup(form, navigate))
+        .then(() => {
+          // Clear the loading message on successful signup
+          setLoadingMessage('');
+        })
+        .catch((error) => {
+          console.log("Signup error:", error.response); // Log the full error response for debugging
+  
+          if (error?.response?.data?.message === "User already exists") {
+            setErrorMessage("Email is already in use!");
+          } else {
+            setErrorMessage("Something went wrong. Please try again.");
+          }
+          setOpenSnackbar(true);
+          setLoadingMessage(''); // Clear loading message
+        });
     } else {
-      dispatch(signin(form, navigate)).catch((error) => {
-        if (error?.response?.data?.message === "Invalid credentials") {
-          setErrorMessage("Incorrect email or password!"); // Set error message
-          setOpenSnackbar(true); // Show Snackbar
-        }
-      });
+      dispatch(signin(form, navigate))
+        .then(() => {
+          // Clear the loading message on successful signin
+          setLoadingMessage('');
+        })
+        .catch((error) => {
+          console.log("Signin error:", error.response); // Log the full error response for debugging
+  
+          if (error?.response?.data?.message === "Invalid credentials") {
+            setErrorMessage("Incorrect email or password!");
+          } else {
+            setErrorMessage("Something went wrong. Please try again.");
+          }
+          setOpenSnackbar(true);
+          setLoadingMessage(''); // Clear loading message
+        });
     }
   };
 
@@ -145,7 +155,7 @@ const Auth = () => {
 
   const onDrop = (acceptedFiles) => {
     setFormData({ ...formData, picture: acceptedFiles[0] });
-    setPreview(URL.createObjectURL(acceptedFiles[0])); 
+    setPreview(URL.createObjectURL(acceptedFiles[0]));
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -155,7 +165,7 @@ const Auth = () => {
   });
 
   const handleCloseSnackbar = () => {
-    setOpenSnackbar(false); // Close the Snackbar after it’s displayed
+    setOpenSnackbar(false);
   };
 
   const onSuccess = (res) => {
@@ -177,11 +187,11 @@ const Auth = () => {
     <GoogleOAuthProvider clientId="your-google-client-id">
       <Container component="main" maxWidth="xs">
         <Paper className={classes.paper} elevation={3}>
-          {isSignUp ?  "" :
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          }
+          {isSignUp ? "" : (
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+          )}
           <Typography variant="h5">
             {isSignUp ? "Sign Up" : "Log In"}
           </Typography>
@@ -231,7 +241,6 @@ const Auth = () => {
                   <Input name="lastName" label="Last Name" handleChange={handleChange} half />
                 </>
               )}
-              
               <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
               <Input
                 name="password"
@@ -272,12 +281,7 @@ const Auth = () => {
             />
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Button onClick={switchMode} style={{
-                  fontWeight:"bold",
-                  color:"red",
-                  fontSize:"0.6rem",
-                  marginTop:"0.5rem"
-                }}>
+                <Button onClick={switchMode} style={{ fontWeight: "bold", color: "red", fontSize: "0.6rem", marginTop: "0.5rem" }}>
                   {isSignUp
                     ? "Already have an account? Sign In"
                     : "Don't have an account? Sign Up"}
@@ -286,15 +290,25 @@ const Auth = () => {
             </Grid>
           </form>
         </Paper>
+
+        {/* Snackbar for error messages */}
         <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-          <Alert onClose={handleCloseSnackbar} severity="error" variant="filled">
+          <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
             {errorMessage}
           </Alert>
         </Snackbar>
+
+        {/* Snackbar for loading message */}
+        {loadingMessage && (
+          <Snackbar open={Boolean(loadingMessage)} autoHideDuration={6000}>
+            <Alert severity="info" sx={{ width: '100%' }}>
+              {loadingMessage}
+            </Alert>
+          </Snackbar>
+        )}
       </Container>
     </GoogleOAuthProvider>
   );
 };
 
 export default Auth;
-
