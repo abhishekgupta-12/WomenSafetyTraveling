@@ -7,52 +7,60 @@ const Newsapp = () => {
   const [newsData, setNewsData] = useState(null);
 
   const getData = async () => {
-    const response = await fetch(`http://localhost:5000/api/news?q=${search}`);
-    const jsonData = await response.json();
-    setNewsData(jsonData);
+    try {
+      const response = await fetch(`https://walk-safe-server.onrender.com/api/news?q=${search}`);
+      const jsonData = await response.json();
+      setNewsData(jsonData);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
   };
 
   useEffect(() => {
-    getData();
+    getData(); // Fetch news data on component mount
   }, []);
 
   const handleInput = (e) => {
-    setSearch(e.target.value);
+    setSearch(e.target.value); // Update search term based on input
   };
 
-  const userInput = (event) => {
-    setSearch(event.target.value);
-    getData(); // Fetch data after setting the input
+  const handleSearch = () => {
+    getData(); // Fetch news data based on search term
+  };
+
+  const handleCategoryClick = (event) => {
+    setSearch(event.target.value); // Update search term based on category click
+    getData(); // Fetch news data based on category
   };
 
   return (
-    <div>
+    <div className="container">
       <nav>
-        <div>
+        <div className="logo">
           <h1>Be Safe</h1>
         </div>
-        <ul style={{ display: "flex", gap: "11px" }}>
-          <a style={{ fontWeight: 600, fontSize: "17px" }}>All News</a>
-          <a style={{ fontWeight: 600, fontSize: "17px" }}>Trending</a>
-        </ul>
         <div className="searchBar">
-          <input type="text" placeholder="Search News" value={search} onChange={handleInput} />
-          <button onClick={getData}>Search</button>
+          <input
+            type="text"
+            placeholder="Search News"
+            value={search}
+            onChange={handleInput} // Update search term on input change
+          />
+          <button onClick={handleSearch}>Search</button> {/* Trigger search on button click */}
         </div>
       </nav>
       <div>
         <p className="head">Stay Updated with TrendyNews</p>
       </div>
       <div className="categoryBtn">
-        <button onClick={userInput} value="Crime">Crime</button>
-        <button onClick={userInput} value="Girls">Girls</button>
-        <button onClick={userInput} value="Awareness">Awareness</button>
-        <button onClick={userInput} value="Health">Health</button>
-        <button onClick={userInput} value="Fitness">Fitness</button>
+        <button onClick={handleCategoryClick} value="Crime">Crime</button>
+        <button onClick={handleCategoryClick} value="Girls">Girls</button>
+        <button onClick={handleCategoryClick} value="Awareness">Awareness</button>
+        <button onClick={handleCategoryClick} value="Health">Health</button>
+        <button onClick={handleCategoryClick} value="Fitness">Fitness</button>
       </div>
-
       <div>
-        {newsData ? <Card data={newsData} /> : null}
+        {newsData ? <Card data={newsData} /> : <p>No news data available</p>}
       </div>
     </div>
   );

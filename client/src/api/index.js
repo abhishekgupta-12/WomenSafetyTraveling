@@ -1,6 +1,6 @@
 import axios from 'axios';
 const API = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: 'https://walk-safe-server.onrender.com',
 });
 
 API.interceptors.request.use((req) => {

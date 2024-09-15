@@ -27,4 +27,11 @@ export default makeStyles((theme) => ({
       backgroundColor: theme.palette.primary.dark,
     },
   },
+  mobileView: {
+    display: "none",
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
+    },
+  },
 }));

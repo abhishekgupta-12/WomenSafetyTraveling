@@ -6,26 +6,31 @@ export default makeStyles((theme) => ({
     borderRadius: 15,
     margin: "30px 0",
     display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // Keep the brand on the left and toolbar on the right
     alignItems: "center",
     padding: "10px 50px",
+    flexDirection: "row",
     [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
       padding: "10px 20px",
     },
   },
   brandContainer: {
     display: "flex",
     alignItems: "center",
+    marginRight: "auto", // Ensures the brand stays on the far left
+  },
+  brandLink: {
+    display: "flex",
+    alignItems: "center",
+    textDecoration: "none",
   },
   brandText: {
+    marginRight: "10px",
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
   },
   image: {
-    marginLeft: "10px",
     marginTop: "5px",
     height: "70px",
     width: "70px",
@@ -36,28 +41,30 @@ export default makeStyles((theme) => ({
   },
   toolbar: {
     display: "flex",
-    justifyContent: "flex-end",
-    width: "400px",
+    justifyContent: "flex-end", // Pushes the toolbar content to the end (far right)
+    alignItems: "center",
+    marginLeft: "auto", // Ensures the toolbar is at the far right of the Navbar
+    width: "auto",
+  },
+  desktopView: {
+    display: "flex",
+    alignItems: "center",
     [theme.breakpoints.down("sm")]: {
-      width: "auto",
-      justifyContent: "space-between",
-      flexGrow: 1,
+      display: "none",
+    },
+  },
+  mobileView: {
+    display: "none",
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      display: "flex",
     },
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
     marginRight: "1rem",
-    marginLeft: "2rem",
-  },
-  mobileView: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      display: "none",
-    },
+    marginLeft: "1rem",
   },
   icon: {
     color: "inherit",

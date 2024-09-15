@@ -1,6 +1,21 @@
 import React, { useState } from "react";
-import { TextField, Button, Container, Typography, Paper, Box } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import Tooltip from "@mui/material/Tooltip";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  TextField,
+  useMediaQuery,
+  Button,
+  Container,
+  Typography,
+  Paper,
+  Box,
+  IconButton,
+  useTheme,
+} from "@mui/material";
+
 const Chatbot = () => {
   const [userInput, setUserInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -8,10 +23,13 @@ const Chatbot = () => {
   const [isListening, setIsListening] = useState(false);
 
   // Initialize your Gemini API
-  const genAI = new GoogleGenerativeAI("AIzaSyB_bC-PjGhg3AZXbybu4KoKsQJi9Wj_VdU");
+  const genAI = new GoogleGenerativeAI(
+    "AIzaSyB_bC-PjGhg3AZXbybu4KoKsQJi9Wj_VdU"
+  );
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = false;
@@ -74,18 +92,55 @@ const Chatbot = () => {
     setChatHistory([]);
   };
 
+  // Get device breakpoints
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h4" align="center" gutterBottom>
+    <Container
+      maxWidth="md"
+      sx={{
+        py: 4,
+        borderRadius: 2,
+        boxShadow: "0px 8px 24px rgba(0,0,0,0.2)",
+        backgroundColor: "#F5F5F5",
+      }}
+    >
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        sx={{ fontWeight: "bold", letterSpacing: "0.05em", color: "#333" }}
+      >
         Chatbot
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 2 }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          height: isMobile ? "20vh" : "30vh",
+          overflowY: "auto",
+          backgroundColor: "#fff",
+          borderRadius: 2,
+          boxShadow: "0px 4px 16px rgba(0,0,0,0.2)",
+        }}
+      >
         <ChatHistory chatHistory={chatHistory} />
-        {isLoading && <Typography variant="body2" align="center">Loading...</Typography>}
+        {isLoading && (
+          <Typography variant="body2" align="center" sx={{ color: "#000" }}>
+            Loading...
+          </Typography>
+        )}
       </Paper>
 
-      <Box mt={2} display="flex">
+      <Box
+        mt={1}
+        mb={2}
+        display="flex"
+        alignItems="center"
+        flexDirection={isMobile ? "column" : "row"}
+      >
         <TextField
           fullWidth
           variant="outlined"
@@ -93,33 +148,74 @@ const Chatbot = () => {
           value={userInput}
           onChange={handleUserInput}
           disabled={isLoading}
+          sx={{
+            backgroundColor: "#fff",
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#4CAF50",
+              },
+              "&:hover fieldset": {
+                borderColor: "#81C784",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#4CAF50",
+              },
+            },
+            "& input": {
+              color: "#000",
+            },
+          }}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={sendMessage}
-          disabled={isLoading}
-          sx={{ ml: 2 }}
-        >
-          Send
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={toggleListening}
-          disabled={isLoading}
-          sx={{ ml: 2 }}
-        >
-          {isListening ? "Stop Listening" : "Speak"}
-        </Button>
+
+        <Box display="flex" mt={isMobile ? 2 : 0} ml={isMobile ? 0 : 2}>
+          <Tooltip title="Send">
+            <IconButton
+              onClick={sendMessage}
+              disabled={isLoading}
+              sx={{
+                ml: isMobile ? 0 : 1,
+                borderRadius: 1,
+                backgroundColor: "#4CAF50",
+                "&:hover": {
+                  backgroundColor: "#81C784",
+                },
+              }}
+            >
+              <SendIcon sx={{ color: "#fff" }} />
+            </IconButton>
+          </Tooltip>
+          <IconButton
+            onClick={toggleListening}
+            disabled={isLoading}
+            sx={{
+              ml: 1,
+              backgroundColor: isListening ? "#D32F2F" : "#4CAF50",
+              "&:hover": {
+                backgroundColor: isListening ? "#E57373" : "#81C784",
+              },
+            }}
+          >
+            {isListening ? (
+              <MicOffIcon sx={{ color: "#fff" }} />
+            ) : (
+              <KeyboardVoiceIcon sx={{ color: "#fff" }} />
+            )}
+          </IconButton>
+        </Box>
       </Box>
 
       <Button
         variant="contained"
-        color="secondary"
+        color="error"
         onClick={clearChat}
         fullWidth
-        sx={{ mt: 2 }}
+        sx={{
+          mt: 2,
+          backgroundColor: "#D32F2F",
+          "&:hover": {
+            backgroundColor: "#E57373",
+          },
+        }}
       >
         Clear Chat
       </Button>
@@ -137,12 +233,18 @@ const ChatHistory = ({ chatHistory }) => {
           sx={{
             p: 2,
             mt: 1,
-            bgcolor: message.type === "user" ? "grey.100" : "blue.100",
-            color: message.type === "user" ? "grey.800" : "blue.800",
+            bgcolor: message.type === "user" ? "#E3F2FD" : "#C8E6C9",
+            color: "#000",
+            borderRadius: 2,
+            boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
           }}
         >
           {message.type === "user" && (
-            <Typography variant="body2" component="span" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="body2"
+              component="span"
+              sx={{ fontWeight: "bold", color: "#1E88E5" }}
+            >
               You:{" "}
             </Typography>
           )}

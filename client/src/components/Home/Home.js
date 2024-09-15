@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getPosts, getPostsBySearch } from "../../actions/posts";
-import { Container, Grow, Grid, Paper, AppBar, TextField, Button, IconButton, Dialog, DialogContent } from "@material-ui/core";
+import {
+  Container,
+  Grow,
+  Grid,
+  Paper,
+  AppBar,
+  TextField,
+  Button,
+  IconButton,
+  Dialog,
+} from "@material-ui/core";
 import ChatIcon from '@mui/icons-material/Chat';
 import Posts from "../Posts/Posts";
 import Form from "../Form/Form";
@@ -11,8 +21,7 @@ import ChipInput from 'material-ui-chip-input';
 import useStyles from './styles';
 import { jwtDecode } from 'jwt-decode';
 import Chatbot from "../../widgets/Chatbot";
-
-
+import { useTheme, useMediaQuery } from '@material-ui/core';  // Import useTheme and useMediaQuery
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -22,8 +31,6 @@ const Home = () => {
   const [currentId, setCurrentId] = useState(0);
   const [openBot, setOpenBot] = useState(false);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
-  const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const query = useQuery();
   const history = useNavigate();
@@ -32,6 +39,10 @@ const Home = () => {
   const classes = useStyles();
   const [search, setSearch] = useState(searchQuery || '');
   const [tags, setTags] = useState(query.get('tags') ? query.get('tags').split(',') : []);
+  const navigate = useNavigate();
+  const theme = useTheme();  // Use theme hook
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));  // Check if screen is mobile
+
   useEffect(() => {
     dispatch(getPosts());
   }, [dispatch]);
@@ -68,13 +79,12 @@ const Home = () => {
       alert("Please login first.");
     }
   };
+
   useEffect(() => {
     const token = user?.token;
     if (token) {
       const decodedToken = jwtDecode(token);
       if (decodedToken.exp * 1000 < new Date().getTime()) {
-        // Logout logic is not needed
-        // You can handle token expiration here, such as redirecting to login
         navigate('/auth');
       }
     }
@@ -126,7 +136,10 @@ const Home = () => {
                 Search
               </Button>
             </AppBar>
-            <Form currentId={currentId} setCurrentId={setCurrentId} />
+
+            {/* Conditionally render Form based on screen size */}
+            {!isMobile && <Form currentId={currentId} setCurrentId={setCurrentId} />}
+
             {(!searchQuery && !tags.length) && (
               <Paper elevation={6} className={classes.Paginate}>
                 <Paginate page={page} />
@@ -145,7 +158,7 @@ const Home = () => {
 
         {/* Chatbot Widget */}
         <Dialog open={openBot} onClose={handleBotToggle}>
-         <Chatbot />
+          <Chatbot />
         </Dialog>
       </Container>
     </Grow>

@@ -1,0 +1,77 @@
+.app-bar {
+    background-color: #ff9c1b;
+    border-bottom: 4px solid white;
+}
+
+.menu-link {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.police-card {
+    width: 400px;
+    max-width: 400px;
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin-left: 380px;
+}
+
+.card-title {
+    font-weight: bold;
+    color: #47440b;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.card-button {
+    color: rgb(222, 28, 28);
+    background-color: #ff9c1b;
+    text-transform: none;
+    margin-right: 10px;
+}
+
+.card-button:hover {
+    background-color: #e68a00;
+}
+
+@media (max-width: 960px) {
+    .card-section {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        justify-items: center;
+    }
+
+    .police-card {
+        width: 90%;
+        margin: 0;
+    }
+}
+
+@media (max-width: 450px) {
+    .card-section {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin: 0;
+    }
+
+    .police-card {
+        width: 100%;
+        margin: 0;
+    }
+}

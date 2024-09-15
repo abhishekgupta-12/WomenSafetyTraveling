@@ -1,0 +1,116 @@
+/* Responsive full-page CSS for CrimePage */
+
+/* Base styles */
+.crime-page {
+    height: 100vh;
+    width: 95vw;
+    margin: 30px 0px;
+    background-image: url("https://images.pexels.com/photos/923681/pexels-photo-923681.jpeg"); /* Replace with a real crime-related background image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.crime-content {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.crime-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.crime-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.crime-button {
+    padding: 15px 30px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.crime-button:hover {
+    background-color: #cc0000;
+}
+
+/* Responsive adjustments */
+
+/* Small devices (phones, portrait view) */
+@media only screen and (max-width: 768px) {
+    .crime-content {
+        padding: 30px;
+    }
+
+    .crime-content h1 {
+        font-size: 2rem;
+    }
+
+    .crime-content p {
+        font-size: 1rem;
+    }
+
+    .crime-button {
+        font-size: 1rem;
+        padding: 12px 24px;
+    }
+}
+
+/* Extra small devices (small phones) */
+@media only screen and (max-width: 480px) {
+    .crime-content {
+        padding: 20px;
+    }
+
+    .crime-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .crime-content p {
+        font-size: 0.9rem;
+    }
+
+    .crime-button {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+    }
+}
+
+/* Large devices (desktops, larger screens) */
+@media only screen and (min-width: 1200px) {
+    .crime-content {
+        max-width: 800px;
+    }
+
+    .crime-content h1 {
+        font-size: 3rem;
+    }
+
+    .crime-content p {
+        font-size: 1.4rem;
+    }
+
+    .crime-button {
+        font-size: 1.4rem;
+        padding: 18px 36px;
+    }
+}
