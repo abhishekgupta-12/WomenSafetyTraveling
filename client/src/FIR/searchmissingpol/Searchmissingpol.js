@@ -23,7 +23,7 @@ const Searchmissingpol = () => {
         e.preventDefault();
         const { property, value } = pdata;
 
-        await fetch(`https://walk-safe-server.onrender.com/api/police/getmissing?${property}=${value}`)
+        await fetch(`http://localhost:5000/api/police/getmissing?${property}=${value}`)
             .then(response => response.json())
             .then(data => {
                 setUsers(data.myMissingPerson);

@@ -29,7 +29,7 @@ const PoliceSignUp = () => {
         const { name, email, serviceNumber, rank, password, cpassword } = pdata;
 
         try {
-            const res = await fetch("https://walk-safe-server.onrender.com/api/police/register", {
+            const res = await fetch("http://localhost:5000/api/police/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

@@ -50,7 +50,7 @@ export default function Firpage() {
     const senddata = async (e) => {
         e.preventDefault();
         const { State, District, PoliceStation, FIRno, Date, Acts, OccurenceDay, OccurenceDate, OccurenceTime, InformationReceivedDate, InformationReceivedDay, InformationReceivedTime, DiaryReferenceEntryNo, DiaryReferenceTime, DirectionAndDistancefromPS, BeatNo, Address, ComplainantName, ComplainantFatherorHusbandName, ComplainantDateOfBirth, ComplainantNationality, ComplainantOccupation, ComplainantPassportNo, ComplainantDateofIssue, ComplainantPlaceOfIssue, ComplainantAddress, DetailsOfSuspected, cadre, ReasonsforDelay, ParticularsOfPropertiesStolenInvolved } = logdata;
-        const res = await fetch("https://walk-safe-server.onrender.com/api/police/registerfir", {
+        const res = await fetch("http://localhost:5000/api/police/registerfir", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

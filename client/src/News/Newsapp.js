@@ -8,7 +8,7 @@ const Newsapp = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch(`https://walk-safe-server.onrender.com/api/news?q=${search}`);
+      const response = await fetch(`http://localhost:5000/api/news?q=${search}`);
       const jsonData = await response.json();
       setNewsData(jsonData);
     } catch (error) {

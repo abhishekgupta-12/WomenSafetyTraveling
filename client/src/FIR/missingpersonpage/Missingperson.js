@@ -30,7 +30,7 @@ export default function Missingperson() {
         e.preventDefault();
         const { name, age, place, aadhar, description, personreporting, found } = logdata;
         try {
-            const res = await fetch("https://walk-safe-server.onrender.com/api/police/registermissing", {
+            const res = await fetch("http://localhost:5000/api/police/registermissing", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

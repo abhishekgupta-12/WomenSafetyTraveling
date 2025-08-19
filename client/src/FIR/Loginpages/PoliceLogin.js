@@ -32,7 +32,7 @@ export default function PoliceLogin() {
         const { email, password, serviceNumber } = logdata;
     
         try {
-            const res = await fetch("https://walk-safe-server.onrender.com/api/police/login", {
+            const res = await fetch("http://localhost:5000/api/police/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

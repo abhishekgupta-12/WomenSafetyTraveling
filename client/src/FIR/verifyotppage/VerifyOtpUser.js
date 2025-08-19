@@ -22,7 +22,7 @@ export default function Userlogin() {
         e.preventDefault();
         console.log("I am here and verify otp");
         const { email, otp } = logdata;
-        const res = await fetch("https://walk-safe-server.onrender.com/api/users/verifyOtp", {
+        const res = await fetch("http://localhost:5000/api/users/verifyOtp", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

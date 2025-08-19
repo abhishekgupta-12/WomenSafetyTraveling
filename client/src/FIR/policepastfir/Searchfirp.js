@@ -23,7 +23,7 @@ const Searchfirp = () => {
         const { FIRno } = pdata;
 
         try {
-            const response = await fetch(`https://walk-safe-server.onrender.com/api/users/getfir?FIRno=${FIRno}`);
+            const response = await fetch(`http://localhost:5000/api/users/getfir?FIRno=${FIRno}`);
             const data = await response.json();
             setUsers(data[0]);
         } catch (error) {

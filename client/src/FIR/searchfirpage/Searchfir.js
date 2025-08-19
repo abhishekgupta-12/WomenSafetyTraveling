@@ -24,7 +24,7 @@ const Searchfir = () => {
         e.preventDefault();
         const { FIRno } = pdata;
 
-        await fetch(`https://walk-safe-server.onrender.com/api/users/getfir?FIRno=${FIRno}`)
+        await fetch(`http://localhost:5000/api/users/getfir?FIRno=${FIRno}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data[0]);
